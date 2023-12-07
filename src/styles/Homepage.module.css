@@ -1,0 +1,200 @@
+.contents {
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: var(--background-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+.imagecontainer {
+  width: 400px;
+  height: auto;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+}
+
+.imageContainer2 {
+  width: 700px;
+  height: 500px;
+}
+
+.image2 {
+  width: 100%;
+  height: 100%;
+}
+
+.welcome {
+  color: var(--primary-color);
+  letter-spacing: 0.1rem;
+  margin-top: 1.5rem;
+  font-size: 3rem;
+  font-family: "Dancing Script", cursive;
+}
+
+.buttons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.button {
+  min-width: 200px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: var(--button-color);
+  font-family: "Montserrat", sans-serif;
+  color: var(--background-color);
+  text-transform: uppercase;
+  text-align: center;
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid var(--button-color);
+  transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
+  font-size: 2rem;
+}
+
+.button:hover {
+  transition-duration: 0.1s;
+  background-color: #002d62;
+}
+
+/* .button:active {
+  top: 1px;
+} */
+
+.homepagepara {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.paragraph {
+  color: var(--button-color);
+  line-height: 3rem;
+  font-size: 2rem;
+  font-family: Open Sans;
+  text-align: center;
+}
+
+.imagecontainerecg {
+  width: 200px;
+  height: auto;
+  margin-top: 25px;
+}
+
+.ecgheading {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 3rem;
+  font-family: Montserrat;
+  color: var(--button-color);
+}
+
+.logo {
+  width: 300px;
+  height: auto;
+}
+
+.ecgsubheading {
+  color: #002d62;
+  font-size: 3rem;
+  margin-top: 20px;
+  font-family: Open Sans;
+}
+
+.measurementcontainer {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  line-height: 5rem;
+}
+
+.measurementcontainertest {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* height: 30vh; */
+
+  line-height: 5rem;
+}
+
+.headinglayout {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 3rem;
+  font-family: Montserrat;
+  color: var(--button-color);
+  letter-spacing: 1rem;
+}
+
+.buttonretaketest {
+  position: relative;
+  width: fitContent;
+  cursor: pointer;
+  text-align: center;
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid var(--button-color);
+  background: var(--button-color);
+  color: var(--background-color);
+  transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
+}
+
+.buttonretaketest:hover {
+  transition-duration: 0.1s;
+  background-color: #10424d;
+}
+
+.buttonretaketest:after {
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 4em;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: all 0.5s;
+  box-shadow: 0 0 10px 20px var(--background-color);
+}
+
+.buttonretaketest:active:after {
+  box-shadow: 0 0 0 0 var(--background-color);
+  position: absolute;
+  border-radius: 4em;
+  left: 0;
+  top: 0;
+  opacity: 1;
+  transition: 0s;
+}
+
+.buttonretaketest:active {
+  top: 1px;
+}
+
+@media screen and (min-width: 3840px) {
+  .contents {
+    width: 3810px;
+  }
+}
+
+.registrationcompletetext {
+  color: var(--button-color);
+  font-size: 3rem;
+  margin-top: 20px;
+  text-align: center;
+}

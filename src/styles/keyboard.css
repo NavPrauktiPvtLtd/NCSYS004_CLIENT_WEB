@@ -1,0 +1,25 @@
+.simple-keyboard {
+  /* text-transform: uppercase; */
+}
+
+.simple-keyboard.hg-theme-default.myTheme {
+  border-radius: 10px;
+}
+
+.simple-keyboard.hg-layout-default .hg-button.hg-red {
+  background: #fff;
+  color: #000;
+  width: 100px;
+  height: 50px;
+  border: 1px solid #6cb4ee;
+  font-weight: bold;
+}
+
+.simple-keyboard.hg-layout-default .hg-button.my-double-quote-button {
+  background: #fff;
+  color: #000;
+  width: 100px;
+  height: 50px;
+  border: 1px solid #6cb4ee;
+  font-weight: bold;
+}

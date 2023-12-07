@@ -1,0 +1,119 @@
+.contents {
+  padding: 5rem;
+  background-color: var(--background-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  user-select: none;
+}
+
+.imagecontainer {
+  width: 400px;
+  height: auto;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+}
+
+.imageContainer2 {
+  width: 500px;
+  height: 300px;
+  padding-top: 30px;
+}
+
+.image2 {
+  width: 100%;
+  height: 100%;
+}
+
+.inputnumberlabel {
+  color: var(--secondary-color);
+  font-size: 3rem;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.phonepagebutton {
+  min-width: 200px;
+  cursor: pointer;
+  text-align: center;
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid var(--button-color);
+  background: var(--button-color);
+  color: var(--background-color);
+  transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
+  font-size: 2rem;
+  text-transform: uppercase;
+}
+
+.divprogressbar {
+  width: 200px;
+  margin-top: 20px;
+}
+
+.buttoncontainer {
+  margin-top: 20px;
+  background: var(--background-color);
+}
+
+.button {
+  color: var(--secondary-color);
+  padding: 3px;
+  background-color: transparent;
+  border: none;
+}
+
+.resendbutton {
+  color: var(--secondary-color);
+  /* padding: 10px; */
+  background-color: var(--background-color);
+  cursor: pointer;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px solid var(--button-color);
+  transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.keyboardContainer {
+  position: fixed;
+  bottom: 4rem;
+  left: 2rem;
+  right: 2rem;
+  background-color: #fff;
+  z-index: 1000;
+}
+
+/* scroll bar */
+.your-scrollable-element {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: auto;
+}
+
+/* WebKit (Chrome, Safari) */
+.your-scrollable-element::-webkit-scrollbar {
+  width: 12px;
+}
+
+.your-scrollable-element::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
+
+/* Firefox */
+.your-scrollable-element {
+  scrollbar-width: thin;
+  scrollbar-color: auto;
+}
+
+.your-scrollable-element {
+  scrollbar-color: #888 auto;
+}

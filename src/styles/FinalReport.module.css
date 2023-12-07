@@ -1,0 +1,153 @@
+.contents {
+  padding: 2rem 1rem 2rem 1rem;
+  background-color: var(--background-color);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.button {
+  min-width: 200px;
+  cursor: pointer;
+  text-align: center;
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid var(--button-color);
+  background: var(--button-color);
+  color: var(--background-color);
+  transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
+  font-size: 2rem;
+}
+
+.logo {
+  width: 300px;
+  height: auto;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+}
+
+.finalreport {
+  margin-top: 10px;
+  font-size: 3rem;
+  font-family: Open Sans;
+  color: var(--button-color);
+}
+
+.userdetailscontainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.boxweightmeasure {
+  margin-top: 1rem;
+  min-height: 10vh;
+  min-width: 35vw;
+  border: 1px solid var(--primary-color);
+  padding: 10px;
+  border-radius: 10px;
+  color: var(--primary-color);
+}
+
+.listtype {
+  list-style-type: lower-alpha;
+  margin: 0 20px;
+}
+
+.patientdetails {
+  width: 100%;
+}
+
+.measurements {
+  text-align: center;
+  margin: 10px;
+  font-size: 1.5rem;
+}
+
+.donebutton {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  bottom: 4rem;
+  margin: 10px;
+  gap: 1rem;
+}
+
+.spanvalue {
+  color: var(--secondary-color);
+}
+
+.ecggraphimg {
+  width: 100%;
+  height: 100%;
+}
+
+.divdateandbillno {
+  text-align: right;
+  color: var(--secondary-color);
+  font-weight: bold;
+}
+
+.spanpatientdetails {
+  color: var(--secondary-color);
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.logocontainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.divpatientdetails {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.divdetails {
+  text-align: right;
+}
+
+.measurementsdetails {
+  display: flex;
+  justify-content: space-between;
+  color: var(--secondary-color);
+}
+
+.spanresultheader {
+  font-weight: bold;
+}
+
+.listtypeol {
+  list-style-type: none;
+  margin-top: 25px;
+  font-weight: bold;
+}
+
+.margintop {
+  margin-top: 25px;
+}
+
+.margintopbpm {
+  margin: 20px 20px 0 20px;
+}
+
+.ecggraphcontainer {
+  width: 500px;
+  height: auto;
+}
+
+.li {
+  margin-bottom: 10px;
+}
