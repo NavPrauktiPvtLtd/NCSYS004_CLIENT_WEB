@@ -32,9 +32,8 @@
 .welcome {
   color: var(--primary-color);
   letter-spacing: 0.1rem;
-  margin-top: 1.5rem;
-  font-size: 3rem;
-  font-family: "Dancing Script", cursive;
+  font-size: 5rem;
+  font-family: "Dancing Script";
 }
 
 .buttons {
@@ -63,22 +62,13 @@
 
 .button:hover {
   transition-duration: 0.1s;
-  background-color: #002d62;
-}
-
-/* .button:active {
-  top: 1px;
-} */
-
-.homepagepara {
-  text-align: center;
-  margin-top: 10px;
+  background-color: rgb(190 18 60);
 }
 
 .paragraph {
   color: var(--button-color);
-  line-height: 3rem;
-  font-size: 2rem;
+  /* line-height: 3rem; */
+  font-size: 3rem;
   font-family: Open Sans;
   text-align: center;
 }

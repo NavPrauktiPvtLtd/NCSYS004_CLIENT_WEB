@@ -1,16 +1,19 @@
-  @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap");
 
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
-  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
-    'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
-    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+    "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
+    "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
 
-    --primary-color: #007bff;   
-    --secondary-color: #000;
-    --background-color: #fff;
-    --button-color:#034694;
+  --primary-color: #007bff;
+  --secondary-color: #000;
+  --background-color: #fff;
+  --button-color: rgb(232, 80, 91);
 
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;

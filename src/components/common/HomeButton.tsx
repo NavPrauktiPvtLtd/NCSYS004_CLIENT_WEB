@@ -28,7 +28,7 @@ const HomeButton = () => {
         >
           <FaHome
             style={{
-              color: "#007bff",
+              color: "rgb(232, 80, 91)",
               cursor: "pointer",
               width: "60px",
             }}

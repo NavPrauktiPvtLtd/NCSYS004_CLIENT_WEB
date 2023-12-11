@@ -54,7 +54,7 @@ const UserRegistrationForm = () => {
     formState: { errors },
   } = useForm<UserFormData>({ resolver: zodResolver(userDetailsFormSchema) });
 
-  const Fn = watch("firstName");
+  const Fn = watch("name");
 
   useEffect(() => {
     console.log({ Fn });
@@ -131,10 +131,7 @@ const UserRegistrationForm = () => {
   };
 
   const handleKeyboardChange = (input: string | Date) => {
-    setValue(
-      inputField as "gender" | "dob" | "firstName" | "lastName" | "email",
-      input
-    );
+    setValue(inputField as "gender" | "dob" | "name", input);
   };
 
   const customDisplay = {
@@ -195,8 +192,8 @@ const UserRegistrationForm = () => {
           <TextInput
             withAsterisk
             label="First Name"
-            {...register("firstName")}
-            error={errors?.firstName?.message}
+            {...register("name")}
+            error={errors?.name?.message}
             fullWidth
             size="xl"
             required
@@ -204,32 +201,9 @@ const UserRegistrationForm = () => {
             onClick={() => handleInputClick("firstName")}
           />
 
-          <TextInput
-            withAsterisk
-            label="Last Name"
-            {...register("lastName")}
-            error={errors?.lastName?.message}
-            fullWidth
-            size="xl"
-            required
-            style={{ marginBottom: "1rem" }}
-            onClick={() => handleInputClick("lastName")}
-          />
-
-          <TextInput
-            withAsterisk
-            label="Email"
-            placeholder="your@email.com"
-            {...register("email")}
-            fullWidth
-            size="xl"
-            error={errors?.email?.message}
-            style={{ marginBottom: "1rem" }}
-            onClick={() => handleInputClick("email")}
-          />
           <SegmentedControl
             style={{ marginBottom: "1rem" }}
-            color="#0d879a"
+            color="red"
             transitionDuration={700}
             fullWidth
             value={gender}

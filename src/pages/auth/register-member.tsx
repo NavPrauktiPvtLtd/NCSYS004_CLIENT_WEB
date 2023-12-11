@@ -8,9 +8,6 @@ export default function UserDetails() {
       <div style={{ position: "absolute", top: "5%", left: "5%" }}>
         <HomeButton />
       </div>
-      <div className={styles.imagecontainer} style={{ width: "400px" }}>
-        <img src="/images/logo.png" alt="object" className={styles.img} />
-      </div>
       <div className={styles.imageContainer2}>
         <img
           src="/images/detailspage.png"
