@@ -1,0 +1,10 @@
+{
+    "name": "Name",
+    "gender": "Gender",
+    "phone":"Mobile Number",
+    "dob":"Date Of Birth",
+    "male": "Male",
+    "female": "Female",
+    "others": "Others"
+  }
+  

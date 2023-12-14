@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { User } from "../../@types/index.";
-import { ECGResult } from "../../API/AppAPI";
 
 interface AuthState {
   accessToken: string | null;
@@ -18,77 +17,6 @@ export const useAuthStore = create<AuthState>()((set) => ({
   setToken: (token) => set((state) => ({ ...state, accessToken: token })),
   clearToken: () => set((state) => ({ ...state, accessToken: null })),
   setSelectedUserId: (id) => set((state) => ({ ...state, selectedUser: id })),
-}));
-
-export interface NibpResult {
-  systolic: number;
-  diastolic: number;
-}
-
-export interface Tests {
-  height: number;
-  weight: number;
-  bmi: number;
-  temperature: number;
-  nibp: NibpResult;
-  spo2: number;
-  ecg: ECGResult;
-}
-
-// state to store different test result which we can use later to generate report
-interface TestResultState {
-  height: number;
-  weight: number;
-  bmi: number;
-  temperature: number;
-  nibp: {
-    systolic: number;
-    diastolic: number;
-  };
-  spo2: number;
-  ecg: ECGResult;
-  setTestValues: (newValues: Partial<Tests>) => void;
-  clearTestValues: () => void;
-}
-
-export const useTestResultStore = create<TestResultState>()((set) => ({
-  height: 0,
-  weight: 0,
-  bmi: 0,
-  temperature: 0,
-  nibp: {
-    systolic: 0,
-    diastolic: 0,
-  },
-  stress: 0,
-  spo2: 0,
-  ecg: {
-    avg_heart_rate: "",
-    text: "",
-    desc: "",
-    image: "",
-  },
-  setTestValues: (newValues) => set((state) => ({ ...state, ...newValues })),
-  clearTestValues: () =>
-    set((state) => ({
-      ...state,
-      height: 0,
-      weight: 0,
-      bmi: 0,
-      temperature: 0,
-      nibp: {
-        systolic: 0,
-        diastolic: 0,
-      },
-      stress: 0,
-      spo2: 0,
-      ecg: {
-        avg_heart_rate: "",
-        text: "",
-        desc: "",
-        image: "",
-      },
-    })),
 }));
 
 //state for storing kiosk serial id
@@ -135,4 +63,25 @@ interface AudioState {
 export const useAudioStore = create<AudioState>((set) => ({
   isOn: true,
   setIsOn: (value) => set({ isOn: value }),
+}));
+
+//for language
+type languageStore = {
+  selectedLanguage: string | null;
+  setLanguage: (language: string) => void;
+};
+
+export const useLanguageStore = create<languageStore>((set) => ({
+  selectedLanguage: null,
+  setLanguage: (language) => set({ selectedLanguage: language }),
+}));
+
+type kioskIdStore = {
+  kioskId: string;
+  setKioskId: (id: string) => void;
+};
+
+export const useKioskIdStore = create<kioskIdStore>((set) => ({
+  kioskId: "1C1D79JBDRRJ",
+  setKioskId: (id) => set({ kioskId: id }),
 }));

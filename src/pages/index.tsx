@@ -1,47 +1,31 @@
 import styles from "../styles/Homepage.module.css";
-import { useEffect } from "react";
 import useClickSound from "@/hooks/useClickSound";
 import { PageRoutes } from "../../@types/index.";
-import { useKioskSerialNumberStore } from "@/store/store";
+import { useLanguageStore } from "@/store/store";
 import { useNavigate } from "react-router-dom";
 import HomePageSvg from "@/components/common/svg/HomePageSvg";
-import ServerAPI from "API/ServerAPI";
+import { useTranslation } from "react-i18next";
 
 export default function Home() {
   const navigate = useNavigate();
 
   const { playClickSound } = useClickSound();
 
-  const { setKioskId, kioskSerialID } = useKioskSerialNumberStore();
+  const { setLanguage } = useLanguageStore();
 
-  function startDiagnosticHandler() {
+  const { i18n } = useTranslation();
+
+  const changeLanguage = (language: string) => {
     playClickSound();
+    console.log(`Changing language to ${language}`);
+    i18n.changeLanguage(language);
+    setLanguage(language);
     navigate(PageRoutes.AUTH_USER_REGISTER_MEMEBER);
-  }
-
-  useEffect(() => {
-    const fetchSerialNumber = async () => {
-      try {
-        const { data } = await ServerAPI.getSerialNumber();
-        setKioskId(data.serialNumber);
-        // console.log(data.serialNumber);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchSerialNumber();
-  }, []);
-
-  useEffect(() => {
-    console.log({ kioskSerialID });
-  }, [kioskSerialID]);
+  };
 
   return (
     <>
       <div className={styles.contents}>
-        {/* <div className={styles.imagecontainer} style={{ width: "200px" }}>
-          <img src="/images/logo.png" alt="object" className={styles.img} />
-        </div> */}
         <div
           className={styles.imageContainer2}
           style={{ width: "700px", height: "500px" }}
@@ -58,10 +42,16 @@ export default function Home() {
           </p>
         </div>
         <div className={styles.buttons}>
-          <button className={styles.button} onClick={startDiagnosticHandler}>
+          <button
+            className={styles.button}
+            onClick={() => changeLanguage("en")}
+          >
             ENGLISH
           </button>
-          <button className={styles.button} onClick={startDiagnosticHandler}>
+          <button
+            className={styles.button}
+            onClick={() => changeLanguage("as")}
+          >
             অসমীয়া
           </button>
         </div>

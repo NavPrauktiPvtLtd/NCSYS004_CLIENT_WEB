@@ -1,15 +1,16 @@
 import styles from "../../styles/Details.module.css";
-import { FormEvent } from "react";
+import { FormEvent, SetStateAction } from "react";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 
 import {
   Button,
-  SegmentedControl,
   Group,
   Loader,
-  TextInput,
   MultiSelect,
+  SegmentedControl,
+  Select,
+  Textarea,
 } from "@mantine/core";
 
 import {
@@ -25,6 +26,7 @@ import { useMemberDataStore } from "@/store/store";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import HomeButton from "@/components/common/HomeButton";
+import { useKioskIdStore } from "@/store/store";
 
 export default function Questionnaire() {
   const navigate = useNavigate();
@@ -53,7 +55,7 @@ export default function Questionnaire() {
 
   const gender = searchParams.get("gender");
 
-  console.log({ gender });
+  const { kioskId } = useKioskIdStore();
 
   useEffect(() => {
     setLoading(true);
@@ -62,7 +64,7 @@ export default function Questionnaire() {
       try {
         const {
           data: { questions },
-        } = await ServerAPI.getQuestionList();
+        } = await ServerAPI.getQuestionList(kioskId);
         setQuestionList(questions);
         setLoading(false);
         const initialAnswersList = questions.map((q) => {
@@ -71,7 +73,7 @@ export default function Questionnaire() {
               questionId: q.id,
               userId: memberData.id,
               answerType: QuestionType.OPTIONS,
-              optionIds: q.options[0].id,
+              optionIds: q.options,
             };
           } else {
             return {
@@ -82,9 +84,7 @@ export default function Questionnaire() {
             };
           }
         }) as QuestionnaireAnswers[];
-
         setAnswersList(initialAnswersList);
-        console.log(questions);
       } catch (error) {
         console.log(error);
       }
@@ -97,9 +97,7 @@ export default function Questionnaire() {
     playClickSound();
     if (!memberData) return;
     try {
-      await ServerAPI.postQuestionnaireAnswers(answersList);
-      console.log("filteredanswersList", answersList);
-
+      await ServerAPI.postQuestionnaireAnswers(answersList, kioskId);
       navigate(PageRoutes.AUTH_USER_REGISTRATION_COMPLETE);
     } catch (error) {
       console.log(error);
@@ -107,11 +105,10 @@ export default function Questionnaire() {
   };
 
   useEffect(() => {
-    console.log({ answersList });
     answersList.forEach((ans) => {
       let answer: string | string[] = "";
       if (ans.answerType === QuestionType.OPTIONS) {
-        answer = ans.optionIds;
+        answer = ans.optionId;
       } else {
         answer = ans.string_answer;
       }
@@ -140,7 +137,9 @@ export default function Questionnaire() {
   //   }
   // };
 
-  // const onKeyboardInputChange = (input: string) => {
+  // const onKeyboardInputChange = (
+  //   input: SetStateAction<QuestionnaireAnswers[]>
+  // ) => {
   //   setAnswersList(input);
   // };
 
@@ -149,10 +148,14 @@ export default function Questionnaire() {
       <div style={{ position: "absolute", top: "5%", left: "5%" }}>
         <HomeButton />
       </div>
-      <div className={styles.imagecontainer} style={{ width: "400px" }}>
-        <img src="/images/logo.png" alt="object" className={styles.img} />
-      </div>
-      <h1 style={{ fontSize: "3rem", textTransform: "uppercase" }}>
+      <h1
+        style={{
+          fontSize: "3rem",
+          textTransform: "uppercase",
+          color: "rgb(232, 80, 91)",
+          fontFamily: "Montserrat",
+        }}
+      >
         Please select the answers below
       </h1>
       {loading ? (
@@ -163,23 +166,23 @@ export default function Questionnaire() {
             if (data.questionType === QuestionType.OPTIONS) {
               return (
                 <div key={data.id}>
-                  <h2 className={styles.userdetailsheading}>{data.question}</h2>
-                  <MultiSelect
+                  <h2 className={styles.userdetailsheading}>
+                    {data.question_text_primary}
+                  </h2>
+                  <SegmentedControl
                     style={{ marginTop: "1rem" }}
-                    placeholder="Pick value"
+                    fullWidth
                     size="xl"
-                    color="#0d879a"
+                    color="red"
                     value={answerObj[data.id]}
                     withScrollArea={false}
                     styles={{ dropdown: { maxHeight: 200, overflowY: "auto" } }}
                     data={data.options.map((option) => ({
                       value: option.id,
-                      label: option.optionVal,
+                      label: option.option_val_primary,
                     }))}
-                    onChange={(val: [""]) => {
+                    onChange={(val: string) => {
                       playClickSound();
-                      console.log({ val });
-
                       setAnswersList((prev) => {
                         const question = prev.find(
                           (i) => i.questionId === data.id
@@ -192,7 +195,7 @@ export default function Questionnaire() {
                           );
                           return [
                             ...filteredAnsList,
-                            { ...question, optionIds: val },
+                            { ...question, optionId: val },
                           ];
                         }
                         return prev;
@@ -204,8 +207,10 @@ export default function Questionnaire() {
             } else {
               return (
                 <div key={data.id}>
-                  <h2 className={styles.userdetailsheading}>{data.question}</h2>
-                  <TextInput
+                  <h2 className={styles.userdetailsheading}>
+                    {data.question_text_primary}
+                  </h2>
+                  <Textarea
                     placeholder="Any Queries"
                     withAsterisk
                     size="xl"
@@ -259,7 +264,7 @@ export default function Questionnaire() {
             }
           })}
           <Group position="center" style={{ marginTop: "2rem" }}>
-            <Button size="xl" uppercase type="submit">
+            <Button size="xl" uppercase type="submit" color="red" radius="md">
               Submit
             </Button>
           </Group>

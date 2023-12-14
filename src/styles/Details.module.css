@@ -20,8 +20,8 @@
 }
 
 .imageContainer2 {
-  width: 300px;
-  height: 250px;
+  width: 500px;
+  height: 350px;
   padding-top: 30px;
 }
 
@@ -46,10 +46,11 @@
 }
 
 .userdetailsheading {
-  color: var(--secondary-color);
   font-size: 3rem;
   margin-top: 20px;
   text-align: center;
+  color: rgb(131 24 67);
+  font-family: Montserrat;
 }
 
 .registrationcompletetext {

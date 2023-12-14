@@ -4,11 +4,6 @@ import { ServerAxiosInstance } from "./config";
 import { Questions } from "../@types/index.";
 import { QuestionnaireAnswers } from "../@types/index.";
 
-interface OtpData {
-  otp: string;
-  token: string;
-}
-
 interface AdminLogin extends SystemAdminLoginData {
   serial_no: string;
 }
@@ -25,22 +20,21 @@ class ServerAPI {
     return ServerAxiosInstance.post("/kiosk-admin/auth/login", data);
   };
 
-  static createUser = async (accessToken: string, data: unknown) => {
-    return ServerAxiosInstance.post<{ user: User }>("/user/create-new", data, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  static createUser = async (data: unknown) => {
+    return ServerAxiosInstance.post<{ user: User }>("/user/create-new", data);
   };
 
-  static getQuestionList = async () => {
+  static getQuestionList = async (kioskId: string) => {
     return ServerAxiosInstance.get<{ questions: Questions[] }>(
-      "/user/question-list"
+      `/user/question-list?kioskId=${kioskId}`
     );
   };
 
-  static postQuestionnaireAnswers = async (data: QuestionnaireAnswers[]) => {
-    return ServerAxiosInstance.post("/user/answers", data);
+  static postQuestionnaireAnswers = async (
+    data: QuestionnaireAnswers[],
+    kioskId: string
+  ) => {
+    return ServerAxiosInstance.post(`/user/answers?kioskId=${kioskId}`, data);
   };
 
   static startTestSession = async ({

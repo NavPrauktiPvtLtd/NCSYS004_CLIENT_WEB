@@ -11,8 +11,6 @@ import {
   userDetailsFormSchema,
   phoneSchema,
 } from "../../../validation";
-
-import { useAuthStore } from "@/store/store";
 import { DateInput } from "@mantine/dates";
 import useClickSound from "@/hooks/useClickSound";
 import { PageRoutes } from "../../../@types/index.";
@@ -21,7 +19,9 @@ import { useNavigate } from "react-router-dom";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import "../../styles/keyboard.css";
-import UnauthorizedSvg from "../common/svg/Unauthorized";
+import { useTranslation } from "react-i18next";
+import { useLanguageStore } from "@/store/store";
+import asLayout from "simple-keyboard-layouts/build/layouts/assamese";
 
 const UserRegistrationForm = () => {
   const [gender, setGender] = useState<GENDER>(GENDER.MALE);
@@ -43,7 +43,8 @@ const UserRegistrationForm = () => {
 
   const [layoutName, setLayoutName] = useState("default");
 
-  const [noAccessTokenerror, setNoAccessTokenerror] = useState(false);
+  const { t, i18n } = useTranslation();
+  const { selectedLanguage } = useLanguageStore();
 
   const {
     register,
@@ -69,8 +70,6 @@ const UserRegistrationForm = () => {
     setGender(value as GENDER);
   };
 
-  const { accessToken } = useAuthStore();
-
   const { setMemberData } = useMemberDataStore();
 
   const onSubmit = handleSubmit(async (data) => {
@@ -79,27 +78,21 @@ const UserRegistrationForm = () => {
     playClickSound();
     console.log({ data });
 
-    if (!accessToken) {
-      setNoAccessTokenerror(true);
-    } else {
-      try {
-        const result = await ServerAPI.createUser(accessToken, data);
-        setGender(GENDER.MALE);
-        setDob(dob);
-        console.log({ result });
-        setMemberData(result.data.user);
-        reset();
-        const queryParams = new URLSearchParams();
-        queryParams.append("gender", data.gender);
-        const nextPagePath = `${
-          PageRoutes.AUTH_USER_QUESTIONNAIRE
-        }?${queryParams.toString()}`;
-        navigate(nextPagePath);
-
-        // navigate(PageRoutes.AUTH_USER_QUESTIONNAIRE);
-      } catch (error) {
-        console.log(error);
-      }
+    try {
+      const result = await ServerAPI.createUser(data);
+      setGender(GENDER.MALE);
+      setDob(dob);
+      console.log({ result });
+      setMemberData(result.data.user);
+      reset();
+      const queryParams = new URLSearchParams();
+      queryParams.append("gender", data.gender);
+      const nextPagePath = `${
+        PageRoutes.AUTH_USER_QUESTIONNAIRE
+      }?${queryParams.toString()}`;
+      navigate(nextPagePath);
+    } catch (error) {
+      console.log(error);
     }
   });
 
@@ -172,106 +165,133 @@ const UserRegistrationForm = () => {
     }
   };
 
+  useEffect(() => {
+    console.log({ selectedLanguage });
+  }, [selectedLanguage]);
+
+  console.log({ asLayout });
+  // const keyboardLayouts: Record<string, Record<string, string>> = {
+  //   en: {
+  //     default: "q w e r t y u i o p a s d f g h j k l z x c v b n m",
+  //     shift: "Q W E R T Y U I O P A S D F G H J K L Z X C V B N M",
+  //   },
+  //   as: {
+  //     default:
+  //       "ৰ ৱ এ ৰ ট ই উ ও প প এ ৰ ট ই উ ৰ এছৰ ৰ ৱ এ ৰ ট ই উ ও প প এ ৰ ট ই উ",
+  //     shift:
+  //       "ৰ ৱ এ ৰ ট ই উ ও প প এ ৰ ট ই উ ৰ এছৰ ৰ ৱ এ ৰ ট ই উ ও প প এ ৰ ট ই উ",
+  //   },
+  // };
+
   return (
     <div>
-      {noAccessTokenerror ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-            marginTop: "2rem",
-          }}
-        >
-          <h1 style={{ fontSize: "5rem" }}>Access Denied</h1>
-          <UnauthorizedSvg />
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit(onSubmit)} style={{ width: "80vw" }}>
-          <TextInput
-            withAsterisk
-            label="First Name"
-            {...register("name")}
-            error={errors?.name?.message}
-            fullWidth
-            size="xl"
-            required
-            style={{ marginBottom: "1rem" }}
-            onClick={() => handleInputClick("firstName")}
-          />
+      <form onSubmit={handleSubmit(onSubmit)} style={{ width: "80vw" }}>
+        <TextInput
+          withAsterisk
+          label={t("name")}
+          {...register("name")}
+          error={errors?.name?.message}
+          fullWidth
+          size="xl"
+          required
+          style={{ marginBottom: "1rem" }}
+          onClick={() => handleInputClick("name")}
+        />
 
-          <SegmentedControl
-            style={{ marginBottom: "1rem" }}
-            color="red"
-            transitionDuration={700}
-            fullWidth
-            value={gender}
-            onChange={handleGenderValue}
-            name="gender"
-            size="xl"
-            data={[
-              { label: "Male", value: GENDER.MALE },
-              { label: "Female", value: GENDER.FEMALE },
-              { label: "Others", value: GENDER.OTHERS },
-            ]}
-          />
-          <DateInput
-            value={dob}
-            onChange={(value: Date) => {
-              if (value) {
-                setDob(value);
-              }
-            }}
-            label="Your Date of Birth"
-            placeholder="January 12,1980"
-            name="dob"
-            fullWidth
-            size="xl"
-            maxDate={new Date()}
-            style={{ marginBottom: "1rem" }}
-          />
-          <TextInput
-            withAsterisk
-            label="Phone number"
-            {...register("phoneNumber")}
-            error={errors?.phoneNumber?.message}
-            fullWidth
-            size="xl"
-            style={{ marginBottom: "1rem" }}
-            // onClick={() => handleInputClick("phoneNumber")}
-            value={keyboardInput}
-            onChange={onInputChange}
-            onClick={handleNumberInputClick}
-          />
-          {keyboardNumberVisibility && (
-            <div className={styles.keyboardContainer}>
+        <SegmentedControl
+          label={t("gender")}
+          style={{ marginBottom: "1rem" }}
+          color="red"
+          transitionDuration={700}
+          fullWidth
+          value={gender}
+          onChange={handleGenderValue}
+          name="gender"
+          size="xl"
+          data={[
+            { label: t("male"), value: GENDER.MALE },
+            { label: t("female"), value: GENDER.FEMALE },
+            { label: t("others"), value: GENDER.OTHERS },
+          ]}
+        />
+        <DateInput
+          value={dob}
+          onChange={(value: Date) => {
+            if (value) {
+              setDob(value);
+            }
+          }}
+          label={t("dob")}
+          placeholder="January 12,1980"
+          name="dob"
+          fullWidth
+          size="xl"
+          maxDate={new Date()}
+          style={{ marginBottom: "1rem" }}
+        />
+        <TextInput
+          withAsterisk
+          label={t("phone")}
+          {...register("phoneNumber")}
+          error={errors?.phoneNumber?.message}
+          fullWidth
+          size="xl"
+          style={{ marginBottom: "1rem" }}
+          value={keyboardInput}
+          onChange={onInputChange}
+          onClick={handleNumberInputClick}
+        />
+        {keyboardNumberVisibility && (
+          <div className={styles.keyboardContainer}>
+            <Keyboard
+              onChange={(input) => setKeyboardInput(input)}
+              onKeyPress={onNumberKeyPress}
+              layout={{
+                default: ["1 2 3", "4 5 6", "7 8 9", "0", "{bksp} {enter}"],
+              }}
+              theme={"hg-theme-default hg-layout-default myTheme"}
+              buttonTheme={[
+                {
+                  class: "hg-red",
+                  buttons: "1 2 3 4 5 6 7 8 9 0 {bksp} {enter}",
+                },
+              ]}
+            />
+          </div>
+        )}
+        <Group position="center" mt="md">
+          <button type="submit" className={styles.button}>
+            Submit
+            <span style={{ paddingLeft: "10px" }}>
+              <FaChevronRight />
+            </span>
+          </button>
+        </Group>
+        {keyboardVisibility && inputField && (
+          <div style={{ marginTop: "1rem" }}>
+            {selectedLanguage === "as" ? (
               <Keyboard
-                onChange={(input) => setKeyboardInput(input)}
-                onKeyPress={onNumberKeyPress}
-                layout={{
-                  default: ["1 2 3", "4 5 6", "7 8 9", "0", "{bksp} {enter}"],
-                }}
+                inputName={inputField}
+                onChange={handleKeyboardChange}
+                onKeyPress={onKeyPress}
+                display={customDisplay}
                 theme={"hg-theme-default hg-layout-default myTheme"}
+                layoutName={layoutName}
+                {...asLayout}
                 buttonTheme={[
                   {
                     class: "hg-red",
-                    buttons: "1 2 3 4 5 6 7 8 9 0 {bksp} {enter}",
+                    buttons:
+                      "১ ২ ৩ ৪ ৫ ৬ ৭ ৮ ৯ ১০ {shift} {enter} {bksp} {tab} {space} .com ঃ ।  ৌ  ৈ া  ী  ূ  ৃ  ঁ  ং  ় ুুুুুুুু  ॥  ে  ্  ি  ু  ০ য় ো অ আ ই ঈ উ ঊ ঋ ৠ এ ঐ ও ঔ ক খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড ঢ ণ ত থ দ ধ ন প ফ ব ভ ম য ৰ ল ৱ শ ষ স হ ক্ষ ণ্ট ণ্ঠ ণ্ড ণ্ঢ ণ্ণ য় ৰ ল় . -  @ $ ( ) ! # % ' * + / = ? ^ ` { | } ~ [ ] ; , \\ _ : < > ",
+                  },
+
+                  {
+                    class: "my-double-quote-button",
+                    buttons: '"',
                   },
                 ]}
               />
-            </div>
-          )}
-          <Group position="center" mt="md">
-            <button type="submit" className={styles.button}>
-              Submit
-              <span style={{ paddingLeft: "10px" }}>
-                <FaChevronRight />
-              </span>
-            </button>
-          </Group>
-          {keyboardVisibility && inputField && (
-            <div style={{ marginTop: "1rem" }}>
+            ) : (
               <Keyboard
                 inputName={inputField}
                 onChange={handleKeyboardChange}
@@ -285,16 +305,23 @@ const UserRegistrationForm = () => {
                     buttons:
                       "1 2 3 4 5 6 7 8 9 0 {shift} {enter} {bksp} {tab} {space} {lock} .com Q W E R T Y U I O P Q W E R T Y U I O P A S D F G H J K L Z X C V B N M q w e r t y u i o p a s d f g h j k l z x c v b n m . - .COM @ $ ( ) ! # % & ' * + / = ? ^ ` { | } ~ [ ] ; , \\ _ : < > ",
                   },
+                  // {
+                  //   class: "hg-red",
+                  //   buttons: selectedLanguage
+                  //     ? keyboardLayouts[selectedLanguage][layoutName]
+                  //     : "",
+                  // },
+
                   {
                     class: "my-double-quote-button",
                     buttons: '"',
                   },
                 ]}
               />
-            </div>
-          )}
-        </form>
-      )}
+            )}
+          </div>
+        )}
+      </form>
     </div>
   );
 };

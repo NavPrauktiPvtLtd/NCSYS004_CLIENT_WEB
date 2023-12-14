@@ -10,7 +10,7 @@ const RegistrationComplete = () => {
 
   useEffect(() => {
     const redirectTimer = setTimeout(() => {
-      navigate(PageRoutes.AUTH_USER_SELECT_MEMBER);
+      navigate(PageRoutes.HOME);
     }, 3000);
 
     return () => clearTimeout(redirectTimer);
@@ -24,9 +24,8 @@ const RegistrationComplete = () => {
       <div style={{ marginTop: "1rem" }}>
         <TestCompletedSvg></TestCompletedSvg>
       </div>
-      <h1 className={styles.registrationcompletetext}>Well Done</h1>
       <h1 className={styles.registrationcompletetext}>
-        ThetaOne has recieved your input
+        Thank you for sharing your valuable feedback.
       </h1>
     </div>
   );

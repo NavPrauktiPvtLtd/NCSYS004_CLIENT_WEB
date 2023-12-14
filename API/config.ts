@@ -9,15 +9,15 @@ export const ServerAxiosInstance = axios.create({
   // },
 });
 
-ServerAxiosInstance.interceptors.request.use((req) => {
-  const token = localStorage.getItem("accessToken");
-  if (token && req.headers) {
-    req.headers.Authorization = `Bearer ${token}`;
-  }
+// ServerAxiosInstance.interceptors.request.use((req) => {
+//   const token = localStorage.getItem("accessToken");
+//   if (token && req.headers) {
+//     req.headers.Authorization = `Bearer ${token}`;
+//   }
 
-  return req;
-});
+//   return req;
+// });
 
-export const AppAxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_APP_URL,
-});
+// export const AppAxiosInstance = axios.create({
+//   baseURL: import.meta.env.VITE_APP_URL,
+// });

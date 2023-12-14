@@ -1,10 +1,3 @@
-export enum TestStatus {
-  START_NOW = "START NOW",
-  TRY_AGAIN = "TRY AGAIN",
-  PROCESSING = "PROCESSING",
-  DONE = "DONE",
-}
-
 export enum GENDER {
   MALE = "male",
   FEMALE = "female",
@@ -13,18 +6,11 @@ export enum GENDER {
 
 export interface User {
   id: string;
-  patient_id: string;
-  firstname: string;
-  lastname: string;
+  name: string;
   dob: string;
   gender: GENDER;
-  email: string;
   createdAt: Date;
-  phone_number: string;
-}
-
-export enum Health_Test {
-  TEMPERATURE = "TEMPERATURE",
+  phoneNumber: string;
 }
 
 export enum PageRoutes {
@@ -41,29 +27,36 @@ export enum QuestionType {
 
 export interface Options {
   id: string;
-  optionVal: string;
+  questionId: string;
+  created_at: Date;
+  option_val_primary: string;
+  option_val_secondary: string;
 }
 
 export type Questions =
   | {
       id: string;
-      question: string;
       is_active: boolean;
+      question_text_primary: string;
+      question_text_secondary: string;
       questionType: QuestionType.STRING;
+      kioskClientId: string;
     }
   | {
       id: string;
-      question: string;
+      question_text_primary: string;
+      question_text_secondary: string;
       is_active: boolean;
       questionType: QuestionType.OPTIONS;
       options: Options[];
+      kioskClientId: string;
     };
 
 export type QuestionnaireAnswers =
   | {
       questionId: string;
       userId: string;
-      optionIds: string[];
+      optionId: string;
       answerType: QuestionType.OPTIONS;
     }
   | {
