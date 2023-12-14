@@ -6,11 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ServerAPI from "../../../API/ServerAPI";
 import { GENDER } from "../../../@types/index.";
-import {
-  UserFormData,
-  userDetailsFormSchema,
-  phoneSchema,
-} from "../../../validation";
+import { UserFormData, userDetailsFormSchema } from "../../../validation";
 import { DateInput } from "@mantine/dates";
 import useClickSound from "@/hooks/useClickSound";
 import { PageRoutes } from "../../../@types/index.";
@@ -51,15 +47,8 @@ const UserRegistrationForm = () => {
     setValue,
     handleSubmit,
     reset,
-    watch,
     formState: { errors },
   } = useForm<UserFormData>({ resolver: zodResolver(userDetailsFormSchema) });
-
-  const Fn = watch("name");
-
-  useEffect(() => {
-    console.log({ Fn });
-  }, [Fn]);
 
   useEffect(() => {
     console.log(errors);
@@ -73,11 +62,7 @@ const UserRegistrationForm = () => {
   const { setMemberData } = useMemberDataStore();
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log("inside handleSubmit");
-
     playClickSound();
-    console.log({ data });
-
     try {
       const result = await ServerAPI.createUser(data);
       setGender(GENDER.MALE);
@@ -169,25 +154,12 @@ const UserRegistrationForm = () => {
     console.log({ selectedLanguage });
   }, [selectedLanguage]);
 
-  console.log({ asLayout });
-  // const keyboardLayouts: Record<string, Record<string, string>> = {
-  //   en: {
-  //     default: "q w e r t y u i o p a s d f g h j k l z x c v b n m",
-  //     shift: "Q W E R T Y U I O P A S D F G H J K L Z X C V B N M",
-  //   },
-  //   as: {
-  //     default:
-  //       "ৰ ৱ এ ৰ ট ই উ ও প প এ ৰ ট ই উ ৰ এছৰ ৰ ৱ এ ৰ ট ই উ ও প প এ ৰ ট ই উ",
-  //     shift:
-  //       "ৰ ৱ এ ৰ ট ই উ ও প প এ ৰ ট ই উ ৰ এছৰ ৰ ৱ এ ৰ ট ই উ ও প প এ ৰ ট ই উ",
-  //   },
-  // };
-
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} style={{ width: "80vw" }}>
         <TextInput
           withAsterisk
+          autoComplete="off"
           label={t("name")}
           {...register("name")}
           error={errors?.name?.message}
@@ -231,6 +203,7 @@ const UserRegistrationForm = () => {
         />
         <TextInput
           withAsterisk
+          autoComplete="off"
           label={t("phone")}
           {...register("phoneNumber")}
           error={errors?.phoneNumber?.message}

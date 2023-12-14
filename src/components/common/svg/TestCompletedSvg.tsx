@@ -11,7 +11,7 @@ const TestCompletedSvg = () => {
       <circle
         className={`${styles.path} ${styles.circle}`}
         fill="none"
-        stroke="#034694"
+        stroke="rgb(232, 80, 91)"
         stroke-width="6"
         stroke-miterlimit="10"
         cx="65.1"
@@ -21,7 +21,7 @@ const TestCompletedSvg = () => {
       <polyline
         className={`${styles.path} ${styles.check}`}
         fill="none"
-        stroke="#034694"
+        stroke="rgb(232, 80, 91)"
         stroke-width="10"
         stroke-linecap="round"
         stroke-miterlimit="10"

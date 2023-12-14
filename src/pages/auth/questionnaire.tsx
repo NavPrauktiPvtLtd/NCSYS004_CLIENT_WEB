@@ -1,5 +1,5 @@
 import styles from "../../styles/Details.module.css";
-import { FormEvent, SetStateAction } from "react";
+import { FormEvent } from "react";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 
@@ -7,9 +7,7 @@ import {
   Button,
   Group,
   Loader,
-  MultiSelect,
   SegmentedControl,
-  Select,
   Textarea,
 } from "@mantine/core";
 
@@ -24,9 +22,9 @@ import ServerAPI from "../../../API/ServerAPI";
 import { useState, useEffect } from "react";
 import { useMemberDataStore } from "@/store/store";
 import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
 import HomeButton from "@/components/common/HomeButton";
 import { useKioskIdStore } from "@/store/store";
+import { useLanguageStore } from "@/store/store";
 
 export default function Questionnaire() {
   const navigate = useNavigate();
@@ -49,13 +47,9 @@ export default function Questionnaire() {
 
   const [layoutName, setLayoutName] = useState("default");
 
-  const location = useLocation();
-
-  const searchParams = new URLSearchParams(location.search);
-
-  const gender = searchParams.get("gender");
-
   const { kioskId } = useKioskIdStore();
+
+  const { selectedLanguage } = useLanguageStore();
 
   useEffect(() => {
     setLoading(true);
@@ -156,7 +150,9 @@ export default function Questionnaire() {
           fontFamily: "Montserrat",
         }}
       >
-        Please select the answers below
+        {selectedLanguage === "en"
+          ? "Please select the answers below"
+          : "অনুগ্ৰহ কৰি তলৰ উত্তৰসমূহ চয়ন কৰক"}
       </h1>
       {loading ? (
         <Loader size="xl" variant="dots" />
@@ -167,7 +163,9 @@ export default function Questionnaire() {
               return (
                 <div key={data.id}>
                   <h2 className={styles.userdetailsheading}>
-                    {data.question_text_primary}
+                    {selectedLanguage === "en"
+                      ? data.question_text_primary
+                      : data.question_text_secondary}
                   </h2>
                   <SegmentedControl
                     style={{ marginTop: "1rem" }}
@@ -179,8 +177,12 @@ export default function Questionnaire() {
                     styles={{ dropdown: { maxHeight: 200, overflowY: "auto" } }}
                     data={data.options.map((option) => ({
                       value: option.id,
-                      label: option.option_val_primary,
+                      label:
+                        selectedLanguage === "en"
+                          ? option.option_val_primary
+                          : option.option_val_secondary,
                     }))}
+                    defaultValue={data.options[0].id}
                     onChange={(val: string) => {
                       playClickSound();
                       setAnswersList((prev) => {
@@ -188,8 +190,6 @@ export default function Questionnaire() {
                           (i) => i.questionId === data.id
                         );
                         if (question) {
-                          console.log({ question });
-
                           const filteredAnsList = prev.filter(
                             (i) => i.questionId !== data.id
                           );
@@ -208,10 +208,12 @@ export default function Questionnaire() {
               return (
                 <div key={data.id}>
                   <h2 className={styles.userdetailsheading}>
-                    {data.question_text_primary}
+                    {selectedLanguage === "en"
+                      ? data.question_text_primary
+                      : data.question_text_secondary}
                   </h2>
                   <Textarea
-                    placeholder="Any Queries"
+                    placeholder="Any Suggestion"
                     withAsterisk
                     size="xl"
                     // onFocus={() => {

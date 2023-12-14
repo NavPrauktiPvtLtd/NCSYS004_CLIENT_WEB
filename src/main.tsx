@@ -33,7 +33,7 @@ const router = createBrowserRouter([
   },
   {
     path: PageRoutes.AUTH_USER_REGISTRATION_COMPLETE,
-    element: <Questionnaire />,
+    element: <RegistrationComplete />,
   },
 ]);
 
