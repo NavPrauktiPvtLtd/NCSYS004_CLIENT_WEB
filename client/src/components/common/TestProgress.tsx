@@ -1,17 +1,17 @@
 import styles from "../../styles/Homepage.module.css";
 import { Progress } from "@mantine/core";
-import { TestStatus } from "../../../@types/index.";
+// import { TestStatus } from "../../../@types/index.";
 
 interface TestProgressProps {
   onClick: () => void;
-  status: TestStatus;
+  // status: TestStatus;
   progress: number;
   text?: string;
 }
 
 const TestProgress = ({
   onClick,
-  status,
+  // status,
   progress = 0,
   text,
 }: TestProgressProps) => {
