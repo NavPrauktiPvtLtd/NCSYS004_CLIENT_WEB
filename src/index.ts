@@ -20,7 +20,7 @@ app.use(express.json());
 
 //* Register routers
 app.use('/api/test', testRouter);
-app.use(express.static(path.join(__dirname, 'client/dist')));
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 app.get('/api/serial-number', async (_, res: Response): Promise<void> => {
   try {
@@ -34,7 +34,7 @@ app.get('/api/serial-number', async (_, res: Response): Promise<void> => {
 });
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
+  res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
 //* Start the server
 app.listen(PORT, () => {
