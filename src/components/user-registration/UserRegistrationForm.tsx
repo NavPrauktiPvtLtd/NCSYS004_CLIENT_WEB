@@ -18,6 +18,8 @@ import "../../styles/keyboard.css";
 import { useTranslation } from "react-i18next";
 import { useLanguageStore } from "@/store/store";
 import asLayout from "simple-keyboard-layouts/build/layouts/assamese";
+import { useKioskIdStore } from "@/store/store";
+import { useTestSessionStore } from "@/store/store";
 
 const UserRegistrationForm = () => {
   const [gender, setGender] = useState<GENDER>(GENDER.MALE);
@@ -39,8 +41,10 @@ const UserRegistrationForm = () => {
 
   const [layoutName, setLayoutName] = useState("default");
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { selectedLanguage } = useLanguageStore();
+  const { kioskId } = useKioskIdStore();
+  const { setSessionId } = useTestSessionStore();
 
   const {
     register,
@@ -59,27 +63,46 @@ const UserRegistrationForm = () => {
     setGender(value as GENDER);
   };
 
-  const { setMemberData } = useMemberDataStore();
+  const { setMemberData, memberData } = useMemberDataStore();
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = async (data: unknown) => {
     playClickSound();
+    console.log({ memberData });
+
+    // if (!memberData) return;
     try {
       const result = await ServerAPI.createUser(data);
       setGender(GENDER.MALE);
       setDob(dob);
       console.log({ result });
       setMemberData(result.data.user);
+
+      // const sessionData = await ServerAPI.startTestSession({
+      //   userId: memberData?.id ?? null,
+      //   kioskId: kioskId,
+      // });
+      // const id = await setSessionIdFn();
+      // setSessionId(id.id);
+
+      navigate(PageRoutes.AUTH_USER_QUESTIONNAIRE);
       reset();
-      const queryParams = new URLSearchParams();
-      queryParams.append("gender", data.gender);
-      const nextPagePath = `${
-        PageRoutes.AUTH_USER_QUESTIONNAIRE
-      }?${queryParams.toString()}`;
-      navigate(nextPagePath);
     } catch (error) {
       console.log(error);
     }
-  });
+  };
+
+  const setSessionIdFn = async () => {
+    if (!memberData) return;
+    const sessionData = await ServerAPI.startTestSession({
+      userId: memberData.id,
+      kioskId: kioskId,
+    });
+    setSessionId(sessionData.id);
+  };
+
+  useEffect(() => {
+    setSessionIdFn();
+  }, [memberData?.id]);
 
   useEffect(() => {
     setValue("gender", gender);
@@ -255,7 +278,7 @@ const UserRegistrationForm = () => {
                   {
                     class: "hg-red",
                     buttons:
-                      "১ ২ ৩ ৪ ৫ ৬ ৭ ৮ ৯ ১০ {shift} {enter} {bksp} {tab} {space} .com ঃ ।  ৌ  ৈ া  ী  ূ  ৃ  ঁ  ং  ় ুুুুুুুু  ॥  ে  ্  ি  ু  ০ য় ো অ আ ই ঈ উ ঊ ঋ ৠ এ ঐ ও ঔ ক খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড ঢ ণ ত থ দ ধ ন প ফ ব ভ ম য ৰ ল ৱ শ ষ স হ ক্ষ ণ্ট ণ্ঠ ণ্ড ণ্ঢ ণ্ণ য় ৰ ল় . -  @ $ ( ) ! # % ' * + / = ? ^ ` { | } ~ [ ] ; , \\ _ : < > ",
+                      "১ ২ ৩ ৪ ৫ ৬ ৭ ৮ ৯ ১ ০ {shift} {enter} {bksp} {tab} {space} .com ঃ ।  ৌ  ৈ া  ী  ূ  ৃ  ঁ  ং  ় ুুুুুুুু  ॥  ে  ্  ি    ু  ০ য় ো অ আ ই ঈ উ ঊ ঋ ৠ এ ঐ ও ঔ ক খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড ঢ ণ ত থ দ ধ ন প ফ ব ভ ম য ৰ ল ৱ শ ষ স হ ক্ষ ণ্ট ণ্ঠ ণ্ড ণ্ঢ ণ্ণ য় ৰ ল় . -  @ $ ( ) ! # % ' * + / = ? ^ ` { | } ~ [ ] ; , \\ _ : < > ",
                   },
 
                   {

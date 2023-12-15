@@ -1,4 +1,4 @@
-import styles from "../../styles/Details.module.css";
+import styles from "../styles/Details.module.css";
 import UserRegistrationForm from "@/components/user-registration/UserRegistrationForm";
 import HomeButton from "@/components/common/HomeButton";
 

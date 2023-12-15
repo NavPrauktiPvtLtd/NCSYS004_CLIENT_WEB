@@ -15,9 +15,9 @@ export interface User {
 
 export enum PageRoutes {
   HOME = "/",
-  AUTH_USER_REGISTER_MEMEBER = "/auth/register-member",
-  AUTH_USER_QUESTIONNAIRE = "/auth/questionnaire",
-  AUTH_USER_REGISTRATION_COMPLETE = "/auth/registration-complete",
+  AUTH_USER_REGISTER_MEMEBER = "/register-member",
+  AUTH_USER_QUESTIONNAIRE = "/questionnaire",
+  AUTH_USER_REGISTRATION_COMPLETE = "/feedback-complete",
 }
 
 export enum QuestionType {

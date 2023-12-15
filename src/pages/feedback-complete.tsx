@@ -1,8 +1,8 @@
 import TestCompletedSvg from "@/components/common/svg/TestCompletedSvg";
-import styles from "../../styles/Details.module.css";
+import styles from "../styles/Details.module.css";
 
 import { useEffect } from "react";
-import { PageRoutes } from "../../../@types/index.";
+import { PageRoutes } from "../../@types/index.";
 import { useNavigate } from "react-router-dom";
 import { useLanguageStore } from "@/store/store";
 

@@ -2,9 +2,9 @@ import * as ReactDOM from "react-dom/client";
 import * as React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { MantineProvider, createEmotionCache } from "@mantine/core";
-import Questionnaire from "./pages/auth/questionnaire";
-import UserDetails from "./pages/auth/register-member";
-import RegistrationComplete from "./pages/auth/registration-complete";
+import Questionnaire from "./pages/questionnaire";
+import UserDetails from "./pages/register-member";
+import RegistrationComplete from "./pages/feedback-complete";
 
 import Unauthorized from "./pages/unauthorized";
 import { PageRoutes } from "../@types/index.";

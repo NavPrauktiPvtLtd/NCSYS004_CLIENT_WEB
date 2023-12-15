@@ -1,4 +1,4 @@
-import styles from "../../styles/Details.module.css";
+import styles from "../styles/Details.module.css";
 import { FormEvent } from "react";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
@@ -16,15 +16,16 @@ import {
   QuestionnaireAnswers,
   Questions,
   QuestionType,
-} from "../../../@types/index.";
+} from "../../@types/index.";
 import useClickSound from "@/hooks/useClickSound";
-import ServerAPI from "../../../API/ServerAPI";
+import ServerAPI from "../../API/ServerAPI";
 import { useState, useEffect } from "react";
 import { useMemberDataStore } from "@/store/store";
 import { useNavigate } from "react-router-dom";
 import HomeButton from "@/components/common/HomeButton";
 import { useKioskIdStore } from "@/store/store";
 import { useLanguageStore } from "@/store/store";
+import { useTestSessionStore } from "@/store/store";
 
 export default function Questionnaire() {
   const navigate = useNavigate();
@@ -50,6 +51,8 @@ export default function Questionnaire() {
   const { kioskId } = useKioskIdStore();
 
   const { selectedLanguage } = useLanguageStore();
+
+  const { sessionID, setSessionId } = useTestSessionStore();
 
   useEffect(() => {
     setLoading(true);
@@ -92,10 +95,17 @@ export default function Questionnaire() {
     if (!memberData) return;
     try {
       await ServerAPI.postQuestionnaireAnswers(answersList, kioskId);
+      await getSessionId();
       navigate(PageRoutes.AUTH_USER_REGISTRATION_COMPLETE);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const getSessionId = async () => {
+    await ServerAPI.endTestSession({
+      statsId: sessionID,
+    });
   };
 
   useEffect(() => {

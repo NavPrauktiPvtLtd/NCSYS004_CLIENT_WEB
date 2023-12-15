@@ -44,21 +44,15 @@ class ServerAPI {
     userId: string | null;
     kioskId: string | null;
   }): Promise<StartTestSessionResponse> => {
-    const response = await ServerAxiosInstance.post("/stats/start-test", {
+    const response = await ServerAxiosInstance.post("/stats/start-session", {
       userId,
       kioskId,
     });
     return response.data;
   };
 
-  static endTestSession = async ({
-    statsId,
-    reportId,
-  }: {
-    statsId: string | null;
-    reportId: string | null;
-  }) => {
-    return ServerAxiosInstance.patch("/stats/end-test", { statsId, reportId });
+  static endTestSession = async ({ statsId }: { statsId: string | null }) => {
+    return ServerAxiosInstance.patch(`/stats/end-session?statsId=${statsId}`);
   };
 }
 
