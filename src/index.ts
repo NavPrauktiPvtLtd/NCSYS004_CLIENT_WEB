@@ -33,6 +33,9 @@ app.get('/api/serial-number', async (_, res: Response): Promise<void> => {
   }
 });
 
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
+});
 //* Start the server
 app.listen(PORT, () => {
   logger.info(`Listening at http://localhost:${PORT}`);
