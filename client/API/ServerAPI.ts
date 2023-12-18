@@ -13,7 +13,7 @@ interface StartTestSessionResponse {
 }
 class ServerAPI {
   static getSerialNumber = async () => {
-    return ServerAxiosInstance.get<{ serialNumber: string }>('/serial-number');
+    return ServerAxiosInstance.get<{ serialNumber: string }>('http://192.168.29.147:5050/api/serial-number');
   };
 
   static adminLogin = async (data: AdminLogin) => {
@@ -24,11 +24,11 @@ class ServerAPI {
     return ServerAxiosInstance.post<{ user: User }>('/user/create-new', data);
   };
 
-  static getQuestionList = async (kioskSerialID: string) => {
+  static getQuestionList = async (kioskSerialID: string | null) => {
     return ServerAxiosInstance.get<{ questions: Questions[] }>(`/user/question-list?kioskSerialID=${kioskSerialID}`);
   };
 
-  static postQuestionnaireAnswers = async (data: QuestionnaireAnswers[], kioskSerialID: string) => {
+  static postQuestionnaireAnswers = async (data: QuestionnaireAnswers[], kioskSerialID: string | null) => {
     return ServerAxiosInstance.post(`/user/answers?kioskSerialID=${kioskSerialID}`, data);
   };
 
