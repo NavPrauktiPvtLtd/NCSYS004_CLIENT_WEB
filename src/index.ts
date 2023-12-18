@@ -7,6 +7,9 @@ import logger from './config/logger';
 import errorHandler from './middlewares/errorHandler.middleware';
 import notFoundHandler from './middlewares/notFoundHandler.middleware';
 import testRouter from './routers/test.router';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const PORT = process.env.PORT || 5050;
 
@@ -22,7 +25,7 @@ app.use(express.json());
 app.use('/api/test', testRouter);
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
-app.get('/api/serial-number', async (_, res: Response): Promise<void> => {
+app.get('/api/kiosk/serial-number', async (_, res: Response): Promise<void> => {
   try {
     const serialNumber = process.env.SERIAL_NO;
 
