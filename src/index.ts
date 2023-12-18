@@ -8,7 +8,7 @@ import errorHandler from './middlewares/errorHandler.middleware';
 import notFoundHandler from './middlewares/notFoundHandler.middleware';
 import testRouter from './routers/test.router';
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 5050;
 
 const app = express();
 
