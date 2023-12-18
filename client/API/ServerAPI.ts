@@ -1,8 +1,8 @@
-import { User } from "../@types/index.";
-import { PhoneFormData, SystemAdminLoginData } from "../validation/index";
-import { ServerAxiosInstance } from "./config";
-import { Questions } from "../@types/index.";
-import { QuestionnaireAnswers } from "../@types/index.";
+import { User } from '../@types/index.';
+import { PhoneFormData, SystemAdminLoginData } from '../validation/index';
+import { ServerAxiosInstance } from './config';
+import { Questions } from '../@types/index.';
+import { QuestionnaireAnswers } from '../@types/index.';
 
 interface AdminLogin extends SystemAdminLoginData {
   serial_no: string;
@@ -13,28 +13,23 @@ interface StartTestSessionResponse {
 }
 class ServerAPI {
   static getSerialNumber = async () => {
-    return ServerAxiosInstance.get<{ serialNumber: string }>("/serial-number");
+    return ServerAxiosInstance.get<{ serialNumber: string }>('/serial-number');
   };
 
   static adminLogin = async (data: AdminLogin) => {
-    return ServerAxiosInstance.post("/kiosk-admin/auth/login", data);
+    return ServerAxiosInstance.post('/kiosk-admin/auth/login', data);
   };
 
   static createUser = async (data: unknown) => {
-    return ServerAxiosInstance.post<{ user: User }>("/user/create-new", data);
+    return ServerAxiosInstance.post<{ user: User }>('/user/create-new', data);
   };
 
-  static getQuestionList = async (kioskId: string) => {
-    return ServerAxiosInstance.get<{ questions: Questions[] }>(
-      `/user/question-list?kioskId=${kioskId}`
-    );
+  static getQuestionList = async (kioskSerialID: string) => {
+    return ServerAxiosInstance.get<{ questions: Questions[] }>(`/user/question-list?kioskSerialID=${kioskSerialID}`);
   };
 
-  static postQuestionnaireAnswers = async (
-    data: QuestionnaireAnswers[],
-    kioskId: string
-  ) => {
-    return ServerAxiosInstance.post(`/user/answers?kioskId=${kioskId}`, data);
+  static postQuestionnaireAnswers = async (data: QuestionnaireAnswers[], kioskSerialID: string) => {
+    return ServerAxiosInstance.post(`/user/answers?kioskSerialID=${kioskSerialID}`, data);
   };
 
   static startTestSession = async ({
@@ -44,7 +39,7 @@ class ServerAPI {
     userId: string | null;
     kioskId: string | null;
   }): Promise<StartTestSessionResponse> => {
-    const response = await ServerAxiosInstance.post("/stats/start-session", {
+    const response = await ServerAxiosInstance.post('/stats/start-session', {
       userId,
       kioskId,
     });
