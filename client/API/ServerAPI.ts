@@ -25,11 +25,11 @@ class ServerAPI {
   };
 
   static getQuestionList = async (kioskSerialID: string | null) => {
-    return ServerAxiosInstance.get<{ questions: Questions[] }>(`/user/question-list?kioskSerialID=${kioskSerialID}`);
+    return ServerAxiosInstance.get<{ questions: Questions[] }>(`/user/question-list?kioskId=${kioskSerialID}`);
   };
 
   static postQuestionnaireAnswers = async (data: QuestionnaireAnswers[], kioskSerialID: string | null) => {
-    return ServerAxiosInstance.post(`/user/answers?kioskSerialID=${kioskSerialID}`, data);
+    return ServerAxiosInstance.post(`/user/answers?kioskId=${kioskSerialID}`, data);
   };
 
   static startTestSession = async ({
