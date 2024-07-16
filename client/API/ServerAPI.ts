@@ -13,7 +13,7 @@ interface StartTestSessionResponse {
 }
 class ServerAPI {
   static getSerialNumber = async () => {
-    return ServerAxiosInstance.get<{ serialNumber: string }>(`${import.meta.env.VITE_SERVER_URL}/kiosk/serial-number`);
+    return ServerAxiosInstance.get<{ serialNumber: string }>('/kiosk/serial-number');
   };
 
   static adminLogin = async (data: AdminLogin) => {

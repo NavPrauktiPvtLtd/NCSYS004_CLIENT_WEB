@@ -13,7 +13,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
   try {
     const result = await userRegistrationSchema.safeParseAsync(req.body);
     if (result.success === false) {
-      logger.error(result.error);
+      logger.error(JSON.stringify(result.error));
       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
       return;
     }
@@ -123,7 +123,7 @@ export const addAnswers = async (req: Request, res: Response, next: NextFunction
     const result = await answerSchema.safeParseAsync(req.body);
     // TODO verify if the member exist for the current user
     if (result.success === false) {
-      logger.error(result.error);
+      logger.error(JSON.stringify(result.error));
       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
       return;
     }
@@ -159,53 +159,52 @@ export const addAnswers = async (req: Request, res: Response, next: NextFunction
       return;
     }
     const answersData = result.data;
-    answersData.forEach(async answerData => {
-      const { questionId, userId, optionId, answerType, string_answer, rating_answer } = answerData;
-      if (answerType === 'String') {
-        if (!string_answer) {
-          next(boom.badRequest('string answer not found'));
-          return;
+    if (answersData && answersData.length > 0) {
+      const answersPromise = answersData.map(answerData => {
+        const { questionId, userId, optionId, answerType, string_answer, rating_answer } = answerData;
+        if (answerType === 'String') {
+          if (!string_answer) {
+            throw new Error('invalid answerType');
+          }
+          return prisma.userAnswer.create({
+            data: {
+              questionId,
+              userId,
+              type: answerType,
+              strVal: string_answer,
+            },
+          });
+        } else if (answerType === 'Rating') {
+          if (!rating_answer) {
+            throw new Error('invalid answerType');
+          }
+          return prisma.userAnswer.create({
+            data: {
+              questionId,
+              userId,
+              type: answerType,
+              ratingVal: rating_answer,
+            },
+          });
+        } else {
+          if (!optionId) {
+            throw new Error('invalid answerType');
+          }
+          return prisma.userAnswer.create({
+            data: {
+              questionId,
+              userId,
+              type: answerType,
+              optionId,
+            },
+          });
         }
-        await prisma.userAnswer.create({
-          data: {
-            questionId,
-            userId,
-            type: answerType,
-            strVal: string_answer,
-          },
-        });
-      } else if (answerType === 'Rating') {
-        if (!rating_answer) {
-          next(boom.badRequest('rating answer not found'));
-          return;
-        }
-        await prisma.userAnswer.create({
-          data: {
-            questionId,
-            userId,
-            type: answerType,
-            ratingVal: rating_answer,
-          },
-        });
-      } else if (answerType === 'Options') {
-        if (!optionId) {
-          next(boom.badRequest('options not found'));
-          return;
-        }
-        await prisma.userAnswer.create({
-          data: {
-            questionId,
-            userId,
-            type: answerType,
-            optionId,
-          },
-        });
-      } else {
-        res.sendStatus(401);
-      }
-    });
-    // res.status(201).send({ answerList });
-    res.sendStatus(201);
+      });
+      await Promise.all(answersPromise);
+      res.sendStatus(201);
+    } else {
+      res.sendStatus(400);
+    }
   } catch (error) {
     logger.error(error);
     next(boom.badRequest(ERRORS.INTERNAL_SERVER_ERROR));
