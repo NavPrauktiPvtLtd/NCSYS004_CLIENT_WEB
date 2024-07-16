@@ -12,7 +12,6 @@ import { answerSchema, kioskIdSchema, userRegistrationSchema } from '../validati
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await userRegistrationSchema.safeParseAsync(req.body);
-
     if (result.success === false) {
       logger.error(result.error);
       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
@@ -20,6 +19,17 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     }
 
     const { name, dob, gender, phoneNumber } = result.data;
+
+    const serialNumber = process.env.SERIAL_NO;
+    const kioskExist = await prisma.kiosk.findFirst({
+      where: {
+        serial_no: serialNumber,
+      },
+    });
+    if (!kioskExist) {
+      next(boom.badRequest('kiosk does not exist'));
+      return;
+    }
 
     const user = await prisma.user.create({
       data: {
@@ -85,7 +95,7 @@ export const getQuestions = async (req: Request, res: Response, next: NextFuncti
       next(boom.badRequest('kiosk-client does not exist'));
       return;
     }
-    console.log('questions', kioskClient);
+    // console.log('questions', kioskClient);
 
     const finalResults = await Promise.all(
       kioskClient.Questionnaire.map(async questionResult => {
@@ -177,7 +187,7 @@ export const addAnswers = async (req: Request, res: Response, next: NextFunction
             ratingVal: rating_answer,
           },
         });
-      } else {
+      } else if (answerType === 'Options') {
         if (!optionId) {
           next(boom.badRequest('options not found'));
           return;
@@ -190,6 +200,8 @@ export const addAnswers = async (req: Request, res: Response, next: NextFunction
             optionId,
           },
         });
+      } else {
+        res.sendStatus(401);
       }
     });
     // res.status(201).send({ answerList });

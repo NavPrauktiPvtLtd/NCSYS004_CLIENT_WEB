@@ -64,7 +64,6 @@ export const editOptionsSchema = z
 export const editQuestionSchema = z.object({
   question_text_primary: z.string().min(6),
   // question_text_secondary: z.string().min(6),
-  // is_active: z.boolean().default(true),
   questionType: z.enum(['String', 'Options', 'Rating']).default('Rating'),
   // options: editOptionsSchema,
   // kioskClientId: z.string(),

@@ -1,6 +1,6 @@
 import styles from '../styles/Details.module.css';
 import 'react-simple-keyboard/build/css/index.css';
-import { Button, Group, Loader, SegmentedControl, Textarea } from '@mantine/core';
+import { Button, Group, Loader, SegmentedControl } from '@mantine/core';
 import { PageRoutes, QuestionnaireAnswers, Questions, QuestionType } from '../../@types/index.';
 import useClickSound from '@/hooks/useClickSound';
 import ServerAPI from '../../API/ServerAPI';
@@ -9,16 +9,13 @@ import { useMemberDataStore } from '@/store/store';
 import { useNavigate } from 'react-router-dom';
 import HomeButton from '@/components/common/HomeButton';
 import { useKioskSerialNumberStore } from '@/store/store';
-import { useLanguageStore } from '@/store/store';
 import { useTestSessionStore } from '@/store/store';
-import { toast } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 export default function Questionnaire() {
   const navigate = useNavigate();
 
   const [questionList, setQuestionList] = useState<Questions[]>([]);
-
-  // const [answersList, setAnswersList] = useState<QuestionnaireAnswers[]>([]);
 
   const { playClickSound } = useClickSound();
 
@@ -28,66 +25,56 @@ export default function Questionnaire() {
 
   const [loading, setLoading] = useState(false);
 
-  // const { kioskSerialID } = useKioskSerialNumberStore();
-
-  const [selectedRating, setSelectedRating] = useState();
+  const { kioskSerialID } = useKioskSerialNumberStore();
 
   const { sessionID } = useTestSessionStore();
 
-  const kioskSerialID = localStorage.getItem('kioskId');
-  console.log({ kioskSerialID });
-
   useEffect(() => {
     setLoading(true);
-    // if (!memberData) return; // uncomment later
-    const getQuestions = async () => {
-      try {
-        const {
-          data: { questions },
-        } = await ServerAPI.getQuestionList(kioskSerialID);
-        console.log({ questions });
-        setQuestionList(questions);
-        setLoading(false);
-        // const initialAnswersList = questions.map(q => {
-        //   return {
-        //     questionId: q.id,
-        //     userId: memberData.id,
-        //     answerType: QuestionType.Rating,
-        //     rating_answer:
-        //   };
-        // }) as QuestionnaireAnswers[];
-        // setAnswersList(initialAnswersList);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getQuestions();
+    if (!memberData) {
+      toast.error('Member not available. Please register');
+      navigate(PageRoutes.HOME);
+    } else {
+      const getQuestions = async () => {
+        try {
+          const {
+            data: { questions },
+          } = await ServerAPI.getQuestionList(kioskSerialID);
+          setQuestionList(questions);
+          setLoading(false);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      getQuestions();
+    }
   }, [memberData]);
 
   const handleRatingChange = (id: any, value: any) => {
     setAnswerObj(prev => ({ ...prev, [id]: value }));
   };
-  console.log({ answerObj });
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     playClickSound();
     if (!memberData) {
       toast.error('Member not available. Please register');
-    }
-    const answersList: QuestionnaireAnswers[] = questionList.map(question => ({
-      questionId: question.id,
-      userId: memberData?.id,
-      answerType: 'Rating',
-      rating_answer: parseInt(answerObj[question.id], 10),
-    }));
-    console.log({ answersList });
-    try {
-      await ServerAPI.postQuestionnaireAnswers(answersList, kioskSerialID);
-      // await getSessionId();
-      navigate(PageRoutes.AUTH_USER_REGISTRATION_COMPLETE);
-    } catch (error) {
-      console.log(error);
+      navigate(PageRoutes.HOME);
+    } else {
+      const answersList: QuestionnaireAnswers[] = questionList.map(question => ({
+        questionId: question.id,
+        userId: memberData?.id,
+        answerType: QuestionType.Rating,
+        rating_answer: parseInt(answerObj[question.id], 10),
+      }));
+      console.log({ answersList });
+      try {
+        await ServerAPI.postQuestionnaireAnswers(answersList, kioskSerialID);
+        await getSessionId();
+        navigate(PageRoutes.AUTH_USER_REGISTRATION_COMPLETE);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -97,60 +84,12 @@ export default function Questionnaire() {
     });
   };
 
-  // useEffect(() => {
-  //   answersList.forEach(ans => {
-  //     let answer: string | string[] = '';
-  //     if (ans.answerType === QuestionType.OPTIONS) {
-  //       answer = ans.optionId;
-  //     } else {
-  //       answer = ans.string_answer;
-  //     }
-  //     setAnswerObj(prev => {
-  //       return {
-  //         ...prev,
-  //         [ans.questionId]: answer,
-  //       };
-  //     });
-  //   });
-  // }, [answersList]);
-
-  // const handleShift = () => {
-  //   const newLayoutName = layoutName === "default" ? "shift" : "default";
-  //   setLayoutName(newLayoutName);
-  // };
-
-  // const onKeyPress = (button: string) => {
-  //   playClickSound();
-  //   if (button === "{shift}" || button === "{lock}") {
-  //     handleShift();
-  //     return;
-  //   }
-  //   if (button === "{enter}") {
-  //     setKeyboardVisibility(false);
-  //   }
-  // };
-
-  // const onKeyboardInputChange = (
-  //   input: SetStateAction<QuestionnaireAnswers[]>
-  // ) => {
-  //   setAnswersList(input);
-  // };
-
   return (
     <div className={styles.contents}>
       <div style={{ position: 'absolute', top: '5%', left: '5%' }}>
         <HomeButton />
       </div>
-      <h1
-        style={{
-          fontSize: '3rem',
-          textTransform: 'uppercase',
-          color: 'rgb(232, 80, 91)',
-          fontFamily: 'Montserrat',
-        }}
-      >
-        Please select the answers below
-      </h1>
+
       {loading ? (
         <div className=" flex items-center gap-1">
           <p
@@ -161,39 +100,50 @@ export default function Questionnaire() {
               fontFamily: 'Montserrat',
             }}
           >
-            Loading Questions
+            Loading Questions ...
           </p>
-          <Loader size="xl" variant="dots" />
         </div>
       ) : (
-        <form onSubmit={onSubmit}>
-          {questionList.map(data => (
-            <div key={data.id}>
-              <h2 className={styles.userdetailsheading}>{data.question_text_primary}</h2>
-              <SegmentedControl
-                style={{ marginTop: '1rem' }}
-                fullWidth
-                size="xl"
-                color="red"
-                value={answerObj[data.id]}
-                withScrollArea={false}
-                styles={{ dropdown: { maxHeight: 200, overflowY: 'auto' } }}
-                data={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
-                onChange={(val: string) => {
-                  playClickSound();
-                  console.log({ val });
-                  handleRatingChange(data.id, val);
-                }}
-              />
-            </div>
-          ))}
-          <Group position="center" style={{ marginTop: '2rem' }}>
-            <Button size="xl" uppercase type="submit" color="red" radius="md">
-              Submit
-            </Button>
-          </Group>
-        </form>
+        <>
+          <h1
+            style={{
+              fontSize: '3rem',
+              textTransform: 'uppercase',
+              color: 'rgb(232, 80, 91)',
+              fontFamily: 'Montserrat',
+            }}
+          >
+            Please select the answers below
+          </h1>
+          <form onSubmit={onSubmit}>
+            {questionList.map(data => (
+              <div key={data.id}>
+                <h2 className={styles.userdetailsheading}>{data.question_text_primary}</h2>
+                <SegmentedControl
+                  style={{ marginTop: '1rem' }}
+                  fullWidth
+                  size="xl"
+                  color="red"
+                  value={answerObj[data.id]}
+                  withScrollArea={false}
+                  styles={{ dropdown: { maxHeight: 200, overflowY: 'auto' } }}
+                  data={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
+                  onChange={(val: string) => {
+                    playClickSound();
+                    handleRatingChange(data.id, val);
+                  }}
+                />
+              </div>
+            ))}
+            <Group position="center" style={{ marginTop: '2rem' }}>
+              <Button size="xl" uppercase type="submit" color="red" radius="md">
+                Submit
+              </Button>
+            </Group>
+          </form>
+        </>
       )}
+      <Toaster />
     </div>
   );
 }

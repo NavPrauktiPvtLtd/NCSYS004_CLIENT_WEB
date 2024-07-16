@@ -4,12 +4,9 @@ import styles from '../styles/Details.module.css';
 import { useEffect } from 'react';
 import { PageRoutes } from '../../@types/index.';
 import { useNavigate } from 'react-router-dom';
-import { useLanguageStore } from '@/store/store';
 
 const RegistrationComplete = () => {
   const navigate = useNavigate();
-
-  const { selectedLanguage } = useLanguageStore();
 
   useEffect(() => {
     const redirectTimer = setTimeout(() => {
@@ -24,10 +21,7 @@ const RegistrationComplete = () => {
       <div style={{ marginTop: '1rem' }}>
         <TestCompletedSvg></TestCompletedSvg>
       </div>
-      <h1 className={styles.registrationcompletetext}>
-        {/* {selectedLanguage === "en" */}? "Thank you for providing your valuable feedback."
-        {/* // : "আপোনাৰ মূল্যবান মন্তব্য প্রদান কৰাৰ বাবে ধন্যবাদ। "} */}
-      </h1>
+      <h1 className={styles.registrationcompletetext}>Thank you for providing your valuable feedback</h1>
     </div>
   );
 };

@@ -20,22 +20,19 @@ export default function Home() {
 
   const { setKioskId, kioskSerialID } = useKioskSerialNumberStore();
 
-  const changeLanguage = (language: string) => {
-    playClickSound();
-    console.log(`Changing language to ${language}`);
-    i18n.changeLanguage(language);
-    setLanguage(language);
-    navigate(PageRoutes.AUTH_USER_REGISTER_MEMEBER);
-  };
+  // const changeLanguage = (language: string) => {
+  //   playClickSound();
+  //   console.log(`Changing language to ${language}`);
+  //   i18n.changeLanguage(language);
+  //   setLanguage(language);
+  //   navigate(PageRoutes.AUTH_USER_REGISTER_MEMEBER);
+  // };
 
   useEffect(() => {
     const fetchSerialNo = async () => {
       try {
         const { data } = await ServerAPI.getSerialNumber();
-        const id = data.serialNumber;
         setKioskId(data.serialNumber);
-        localStorage.setItem('kioskId', id); //remove later
-        console.log('serial no.', data.serialNumber);
       } catch (error) {
         console.log(error);
       }
@@ -66,9 +63,6 @@ export default function Home() {
           <button className={styles.button} onClick={handleButton}>
             Start
           </button>
-          {/* <button className={styles.button} onClick={() => changeLanguage('as')}>
-            অসমীয়া
-          </button> */}
         </div>
       </div>
     </>
