@@ -1,5 +1,5 @@
 import { User } from '../@types/index.';
-import { PhoneFormData, SystemAdminLoginData } from '../validation/index';
+import { SystemAdminLoginData } from '../validation/index';
 import { ServerAxiosInstance } from './config';
 import { Questions } from '../@types/index.';
 import { QuestionnaireAnswers } from '../@types/index.';
@@ -13,7 +13,7 @@ interface StartTestSessionResponse {
 }
 class ServerAPI {
   static getSerialNumber = async () => {
-    return ServerAxiosInstance.get<{ serialNumber: string }>('http://192.168.29.147:5050/api/serial-number');
+    return ServerAxiosInstance.get<{ serialNumber: string }>('http://192.168.29.77:5050/api/kiosk/serial-number');
   };
 
   static adminLogin = async (data: AdminLogin) => {
