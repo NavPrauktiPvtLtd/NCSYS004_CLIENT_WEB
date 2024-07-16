@@ -20,20 +20,19 @@ export default function Home() {
 
   const { setKioskId, kioskSerialID } = useKioskSerialNumberStore();
 
-  const changeLanguage = (language: string) => {
-    playClickSound();
-    console.log(`Changing language to ${language}`);
-    i18n.changeLanguage(language);
-    setLanguage(language);
-    navigate(PageRoutes.AUTH_USER_REGISTER_MEMEBER);
-  };
+  // const changeLanguage = (language: string) => {
+  //   playClickSound();
+  //   console.log(`Changing language to ${language}`);
+  //   i18n.changeLanguage(language);
+  //   setLanguage(language);
+  //   navigate(PageRoutes.AUTH_USER_REGISTER_MEMEBER);
+  // };
 
   useEffect(() => {
     const fetchSerialNo = async () => {
       try {
         const { data } = await ServerAPI.getSerialNumber();
         setKioskId(data.serialNumber);
-        console.log(data.serialNumber);
       } catch (error) {
         console.log(error);
       }
@@ -42,8 +41,12 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log({ kioskSerialID });
+    console.log('kioskid', { kioskSerialID });
   }, [kioskSerialID]);
+
+  const handleButton = () => {
+    navigate(PageRoutes.AUTH_USER_REGISTER_MEMEBER);
+  };
 
   return (
     <>
@@ -55,17 +58,10 @@ export default function Home() {
           {' '}
           Welcome
         </div>
-        <div className={styles.homepagepara}>
-          <p className={styles.paragraph} style={{ color: 'rgb(232, 80, 91)' }}>
-            Choose The Language
-          </p>
-        </div>
+
         <div className={styles.buttons}>
-          <button className={styles.button} onClick={() => changeLanguage('en')}>
-            ENGLISH
-          </button>
-          <button className={styles.button} onClick={() => changeLanguage('as')}>
-            অসমীয়া
+          <button className={styles.button} onClick={handleButton}>
+            Start
           </button>
         </div>
       </div>

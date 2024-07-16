@@ -1,11 +1,11 @@
 export enum GENDER {
-  MALE = "male",
-  FEMALE = "female",
-  OTHERS = "others",
+  MALE = 'male',
+  FEMALE = 'female',
+  OTHERS = 'others',
 }
 
 export interface User {
-  id: string;
+  id: string | null;
   name: string;
   dob: string;
   gender: GENDER;
@@ -14,15 +14,16 @@ export interface User {
 }
 
 export enum PageRoutes {
-  HOME = "/",
-  AUTH_USER_REGISTER_MEMEBER = "/register-member",
-  AUTH_USER_QUESTIONNAIRE = "/questionnaire",
-  AUTH_USER_REGISTRATION_COMPLETE = "/feedback-complete",
+  HOME = '/',
+  AUTH_USER_REGISTER_MEMEBER = '/register-member',
+  AUTH_USER_QUESTIONNAIRE = '/questionnaire',
+  AUTH_USER_REGISTRATION_COMPLETE = '/feedback-complete',
 }
 
 export enum QuestionType {
-  OPTIONS = "Options",
-  STRING = "String",
+  OPTIONS = 'Options',
+  STRING = 'String',
+  Rating = 'Rating',
 }
 
 export interface Options {
@@ -33,35 +34,29 @@ export interface Options {
   option_val_secondary: string;
 }
 
-export type Questions =
-  | {
-      id: string;
-      is_active: boolean;
-      question_text_primary: string;
-      question_text_secondary: string;
-      questionType: QuestionType.STRING;
-      kioskClientId: string;
-    }
-  | {
-      id: string;
-      question_text_primary: string;
-      question_text_secondary: string;
-      is_active: boolean;
-      questionType: QuestionType.OPTIONS;
-      options: Options[];
-      kioskClientId: string;
-    };
+export type Questions = {
+  id: string;
+  is_active: boolean;
+  question_text_primary: string;
+  questionType: QuestionType.Rating;
+  kioskClientId: string;
+};
 
-export type QuestionnaireAnswers =
-  | {
-      questionId: string;
-      userId: string;
-      optionId: string;
-      answerType: QuestionType.OPTIONS;
-    }
-  | {
-      questionId: string;
-      userId: string;
-      answerType: QuestionType.STRING;
-      string_answer: string;
-    };
+export type QuestionnaireAnswers = {
+  questionId: string;
+  userId: string | null;
+  answerType: QuestionType.Rating;
+  rating_answer: number;
+};
+// | {
+//     questionId: string;
+//     userId: string;
+//     optionId: string;
+//     answerType: QuestionType.OPTIONS;
+//   }
+// | {
+//     questionId: string;
+//     userId: string;
+//     answerType: QuestionType.STRING;
+//     string_answer: string;
+//   };

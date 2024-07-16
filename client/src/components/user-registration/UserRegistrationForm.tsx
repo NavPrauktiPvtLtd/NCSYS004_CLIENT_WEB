@@ -16,10 +16,9 @@ import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import '../../styles/keyboard.css';
 import { useTranslation } from 'react-i18next';
-import { useLanguageStore } from '@/store/store';
-import asLayout from 'simple-keyboard-layouts/build/layouts/assamese';
 import { useKioskSerialNumberStore } from '@/store/store';
 import { useTestSessionStore } from '@/store/store';
+import { toast, ToastBar, Toaster } from 'react-hot-toast';
 
 const UserRegistrationForm = () => {
   const [gender, setGender] = useState<GENDER>(GENDER.MALE);
@@ -41,8 +40,6 @@ const UserRegistrationForm = () => {
   const [layoutName, setLayoutName] = useState('default');
 
   const { t } = useTranslation();
-
-  const { selectedLanguage } = useLanguageStore();
 
   const { kioskSerialID } = useKioskSerialNumberStore();
 
@@ -69,37 +66,28 @@ const UserRegistrationForm = () => {
 
   const onSubmit = async (data: unknown) => {
     playClickSound();
-    console.log({ memberData });
-
-    // if (!memberData) return;
     try {
       const result = await ServerAPI.createUser(data);
       setGender(GENDER.MALE);
       setDob(dob);
-      console.log({ result });
       setMemberData(result.data.user);
-
-      // const sessionData = await ServerAPI.startTestSession({
-      //   userId: memberData?.id ?? null,
-      //   kioskId: kioskId,
-      // });
-      // const id = await setSessionIdFn();
-      // setSessionId(id.id);
-
       navigate(PageRoutes.AUTH_USER_QUESTIONNAIRE);
       reset();
     } catch (error) {
       console.log(error);
+      toast.error('Something went wrong, Click the home button');
     }
   };
 
   const setSessionIdFn = async () => {
     if (!memberData) return;
-    const sessionData = await ServerAPI.startTestSession({
-      userId: memberData.id,
-      kioskId: kioskSerialID,
-    });
-    setSessionId(sessionData.id);
+    else {
+      const sessionData = await ServerAPI.startTestSession({
+        userId: memberData.id,
+        kioskId: kioskSerialID,
+      });
+      setSessionId(sessionData.id);
+    }
   };
 
   useEffect(() => {
@@ -174,10 +162,6 @@ const UserRegistrationForm = () => {
       setValue('phoneNumber', newValue);
     }
   };
-
-  useEffect(() => {
-    console.log({ selectedLanguage });
-  }, [selectedLanguage]);
 
   return (
     <div>
@@ -267,59 +251,37 @@ const UserRegistrationForm = () => {
         </Group>
         {keyboardVisibility && inputField && (
           <div style={{ marginTop: '1rem' }}>
-            {selectedLanguage === 'as' ? (
-              <Keyboard
-                inputName={inputField}
-                onChange={handleKeyboardChange}
-                onKeyPress={onKeyPress}
-                display={customDisplay}
-                theme={'hg-theme-default hg-layout-default myTheme'}
-                layoutName={layoutName}
-                {...asLayout}
-                buttonTheme={[
-                  {
-                    class: 'hg-red',
-                    buttons:
-                      "১ ২ ৩ ৪ ৫ ৬ ৭ ৮ ৯ ১ ০ {shift} {enter} {bksp} {tab} {space} .com ঃ ।  ৌ  ৈ া  ী  ূ  ৃ  ঁ  ং  ় ুুুুুুুু  ॥  ে  ্  ি    ু  ০ য় ো অ আ ই ঈ উ ঊ ঋ ৠ এ ঐ ও ঔ ক খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড ঢ ণ ত থ দ ধ ন প ফ ব ভ ম য ৰ ল ৱ শ ষ স হ ক্ষ ণ্ট ণ্ঠ ণ্ড ণ্ঢ ণ্ণ য় ৰ ল় . -  @ $ ( ) ! # % ' * + / = ? ^ ` { | } ~ [ ] ; , \\ _ : < > ",
-                  },
+            <Keyboard
+              inputName={inputField}
+              onChange={handleKeyboardChange}
+              onKeyPress={onKeyPress}
+              display={customDisplay}
+              theme={'hg-theme-default hg-layout-default myTheme'}
+              layoutName={layoutName}
+              buttonTheme={[
+                {
+                  class: 'hg-red',
+                  buttons:
+                    "1 2 3 4 5 6 7 8 9 0 {shift} {enter} {bksp} {tab} {space} {lock} .com Q W E R T Y U I O P Q W E R T Y U I O P A S D F G H J K L Z X C V B N M q w e r t y u i o p a s d f g h j k l z x c v b n m . - .COM @ $ ( ) ! # % & ' * + / = ? ^ ` { | } ~ [ ] ; , \\ _ : < > ",
+                },
+                // {
+                //   class: "hg-red",
+                //   buttons: selectedLanguage
+                //     ? keyboardLayouts[selectedLanguage][layoutName]
+                //     : "",
+                // },
 
-                  {
-                    class: 'my-double-quote-button',
-                    buttons: '"',
-                  },
-                ]}
-              />
-            ) : (
-              <Keyboard
-                inputName={inputField}
-                onChange={handleKeyboardChange}
-                onKeyPress={onKeyPress}
-                display={customDisplay}
-                theme={'hg-theme-default hg-layout-default myTheme'}
-                layoutName={layoutName}
-                buttonTheme={[
-                  {
-                    class: 'hg-red',
-                    buttons:
-                      "1 2 3 4 5 6 7 8 9 0 {shift} {enter} {bksp} {tab} {space} {lock} .com Q W E R T Y U I O P Q W E R T Y U I O P A S D F G H J K L Z X C V B N M q w e r t y u i o p a s d f g h j k l z x c v b n m . - .COM @ $ ( ) ! # % & ' * + / = ? ^ ` { | } ~ [ ] ; , \\ _ : < > ",
-                  },
-                  // {
-                  //   class: "hg-red",
-                  //   buttons: selectedLanguage
-                  //     ? keyboardLayouts[selectedLanguage][layoutName]
-                  //     : "",
-                  // },
-
-                  {
-                    class: 'my-double-quote-button',
-                    buttons: '"',
-                  },
-                ]}
-              />
-            )}
+                {
+                  class: 'my-double-quote-button',
+                  buttons: '"',
+                },
+              ]}
+            />
+            {/* )} */}
           </div>
         )}
       </form>
+      <Toaster />
     </div>
   );
 };
