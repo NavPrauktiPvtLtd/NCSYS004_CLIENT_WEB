@@ -1,0 +1,168 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  male
+  female
+  others
+}
+
+enum DeviceStatus {
+  Online
+  Offline
+}
+
+enum AnswerType {
+  String
+  Options
+  Rating
+}
+
+model Admin {
+  id       String @id @default(uuid())
+  username String @db.VarChar(255)
+  email    String @db.VarChar(255)
+  password String @db.VarChar(255)
+
+  @@index([email])
+  @@map(name: "admins")
+}
+
+// model KioskAdmin {
+//   id       String @id @default(uuid())
+//   email    String @db.VarChar(255)
+//   password String @db.VarChar(255)
+
+//   kioskId_fk Kiosk  @relation(fields: [kioskId], references: [id], onDelete: Cascade)
+//   kioskId    String @unique
+
+//   @@index([email])
+//   @@map(name: "kiosk-admins")
+// }
+
+model User {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(255)
+  phoneNumber String   @db.VarChar(255)
+  dob         DateTime
+  gender      Gender
+  createdAt   DateTime @default(now())
+
+  UserAnswer UserAnswer[]
+  Statistics Statistics[]
+}
+
+model Kiosk {
+  id        String       @id @default(uuid())
+  serial_no String       @db.VarChar(255)
+  name      String       @db.VarChar(255)
+  status    DeviceStatus
+  createdAt DateTime     @default(now())
+
+  kioskClientId_fk KioskClient  @relation(fields: [kioskClientId], references: [id])
+  kioskClientId    String
+  Address          Address?
+  // KioskAdmin       KioskAdmin?
+  Statistics       Statistics[]
+}
+
+model Address {
+  id       String @id @default(uuid())
+  state    String @db.VarChar(255)
+  district String @db.VarChar(255)
+  pincode  String @db.VarChar(255)
+
+  kioskId_fk       Kiosk?       @relation(fields: [kioskId], references: [id], onDelete: Cascade)
+  kioskId          String?      @unique
+  kioskClientId_fk KioskClient? @relation(fields: [kioskClientId], references: [id], onDelete: Cascade)
+  kioskClientId    String?      @unique
+}
+
+model KioskClient {
+  id          String   @id @default(uuid())
+  userName    String   @db.VarChar(255)
+  name        String   @db.VarChar(255)
+  email       String   @db.VarChar(255)
+  password    String   @db.VarChar(255)
+  pan         String   @db.VarChar(255)
+  phoneNumber String   @db.VarChar(255)
+  created_at  DateTime @default(now())
+
+  Address Address?
+
+  link   Link   @relation(fields: [linkId], references: [id])
+  linkId String @unique
+
+  Kiosk         Kiosk[]
+  Questionnaire Questionnaire[]
+}
+
+model Link {
+  id         String   @unique
+  expiryTime DateTime
+  created_at DateTime @default(now())
+
+  KioskClient KioskClient?
+}
+
+model Questionnaire {
+  id                      String     @id @default(uuid())
+  question_text_primary   String
+  question_text_secondary String?
+  is_active               Boolean
+  created_at              DateTime   @default(now())
+  questionType            AnswerType
+
+  UserAnswer      UserAnswer[]
+  QuestionsOption QuestionsOption[]
+  KioskClient     KioskClient?      @relation(fields: [kioskClientId], references: [id])
+  kioskClientId   String?
+}
+
+model QuestionsOption {
+  id                   String   @id @default(uuid())
+  option_val_primary   String
+  option_val_secondary String?
+  created_at           DateTime @default(now())
+
+  questionId_fk Questionnaire @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId    String
+  UserAnswer    UserAnswer[]
+}
+
+model UserAnswer {
+  id         String     @id @default(uuid())
+  type       AnswerType
+  strVal     String?
+  ratingVal  Int?
+  created_at DateTime   @default(now())
+
+  questionId_fk Questionnaire    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId    String
+  userId_fk     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  optionId_fk   QuestionsOption? @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  optionId      String?
+}
+
+model Statistics {
+  id            String    @id @default(uuid())
+  feedbackGiven Boolean
+  created_at    DateTime  @default(now())
+  start_time    DateTime?
+  end_time      DateTime?
+
+  userId_fk  User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId     String?
+  kioskId_fk Kiosk?  @relation(fields: [kioskId], references: [id], onDelete: SetNull)
+  kioskId    String?
+}
