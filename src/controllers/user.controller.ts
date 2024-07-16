@@ -12,7 +12,6 @@ import { answerSchema, kioskIdSchema, userRegistrationSchema } from '../validati
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await userRegistrationSchema.safeParseAsync(req.body);
-
     if (result.success === false) {
       logger.error(result.error);
       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
@@ -20,6 +19,17 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     }
 
     const { name, dob, gender, phoneNumber } = result.data;
+
+    const serialNumber = process.env.SERIAL_NO;
+    const kioskExist = await prisma.kiosk.findFirst({
+      where: {
+        serial_no: serialNumber,
+      },
+    });
+    if (!kioskExist) {
+      next(boom.badRequest('kiosk does not exist'));
+      return;
+    }
 
     const user = await prisma.user.create({
       data: {
