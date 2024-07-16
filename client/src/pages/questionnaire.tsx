@@ -1,76 +1,62 @@
 import styles from '../styles/Details.module.css';
-import { FormEvent } from 'react';
-import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
-
 import { Button, Group, Loader, SegmentedControl, Textarea } from '@mantine/core';
-
 import { PageRoutes, QuestionnaireAnswers, Questions, QuestionType } from '../../@types/index.';
 import useClickSound from '@/hooks/useClickSound';
 import ServerAPI from '../../API/ServerAPI';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { useMemberDataStore } from '@/store/store';
 import { useNavigate } from 'react-router-dom';
 import HomeButton from '@/components/common/HomeButton';
 import { useKioskSerialNumberStore } from '@/store/store';
 import { useLanguageStore } from '@/store/store';
 import { useTestSessionStore } from '@/store/store';
+import { toast } from 'react-hot-toast';
 
 export default function Questionnaire() {
   const navigate = useNavigate();
 
   const [questionList, setQuestionList] = useState<Questions[]>([]);
 
-  const [answersList, setAnswersList] = useState<QuestionnaireAnswers[]>([]);
+  // const [answersList, setAnswersList] = useState<QuestionnaireAnswers[]>([]);
 
   const { playClickSound } = useClickSound();
 
   const { memberData } = useMemberDataStore();
 
-  const [answerObj, setAnswerObj] = useState<Record<string, unknown>>({});
+  const [answerObj, setAnswerObj] = useState<{ [key: string]: string }>({});
 
   const [loading, setLoading] = useState(false);
 
-  const [keyboardVisibility, setKeyboardVisibility] = useState(false);
+  // const { kioskSerialID } = useKioskSerialNumberStore();
 
-  const [inputField, setInputField] = useState('');
+  const [selectedRating, setSelectedRating] = useState();
 
-  const [layoutName, setLayoutName] = useState('default');
+  const { sessionID } = useTestSessionStore();
 
-  const { kioskSerialID } = useKioskSerialNumberStore();
-
-  const { selectedLanguage } = useLanguageStore();
-
-  const { sessionID, setSessionId } = useTestSessionStore();
+  const kioskSerialID = localStorage.getItem('kioskId');
+  console.log({ kioskSerialID });
 
   useEffect(() => {
     setLoading(true);
-    if (!memberData) return;
+    // if (!memberData) return; // uncomment later
     const getQuestions = async () => {
       try {
         const {
           data: { questions },
         } = await ServerAPI.getQuestionList(kioskSerialID);
+        console.log({ questions });
         setQuestionList(questions);
         setLoading(false);
-        const initialAnswersList = questions.map(q => {
-          if (q.questionType === QuestionType.OPTIONS) {
-            return {
-              questionId: q.id,
-              userId: memberData.id,
-              answerType: QuestionType.OPTIONS,
-              optionIds: q.options,
-            };
-          } else {
-            return {
-              questionId: q.id,
-              userId: memberData.id,
-              answerType: QuestionType.STRING,
-              string_answer: q.questionType,
-            };
-          }
-        }) as QuestionnaireAnswers[];
-        setAnswersList(initialAnswersList);
+        // const initialAnswersList = questions.map(q => {
+        //   return {
+        //     questionId: q.id,
+        //     userId: memberData.id,
+        //     answerType: QuestionType.Rating,
+        //     rating_answer:
+        //   };
+        // }) as QuestionnaireAnswers[];
+        // setAnswersList(initialAnswersList);
       } catch (error) {
         console.log(error);
       }
@@ -78,13 +64,27 @@ export default function Questionnaire() {
     getQuestions();
   }, [memberData]);
 
+  const handleRatingChange = (id: any, value: any) => {
+    setAnswerObj(prev => ({ ...prev, [id]: value }));
+  };
+  console.log({ answerObj });
+
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     playClickSound();
-    if (!memberData) return;
+    if (!memberData) {
+      toast.error('Member not available. Please register');
+    }
+    const answersList: QuestionnaireAnswers[] = questionList.map(question => ({
+      questionId: question.id,
+      userId: memberData?.id,
+      answerType: 'Rating',
+      rating_answer: parseInt(answerObj[question.id], 10),
+    }));
+    console.log({ answersList });
     try {
       await ServerAPI.postQuestionnaireAnswers(answersList, kioskSerialID);
-      await getSessionId();
+      // await getSessionId();
       navigate(PageRoutes.AUTH_USER_REGISTRATION_COMPLETE);
     } catch (error) {
       console.log(error);
@@ -97,22 +97,22 @@ export default function Questionnaire() {
     });
   };
 
-  useEffect(() => {
-    answersList.forEach(ans => {
-      let answer: string | string[] = '';
-      if (ans.answerType === QuestionType.OPTIONS) {
-        answer = ans.optionId;
-      } else {
-        answer = ans.string_answer;
-      }
-      setAnswerObj(prev => {
-        return {
-          ...prev,
-          [ans.questionId]: answer,
-        };
-      });
-    });
-  }, [answersList]);
+  // useEffect(() => {
+  //   answersList.forEach(ans => {
+  //     let answer: string | string[] = '';
+  //     if (ans.answerType === QuestionType.OPTIONS) {
+  //       answer = ans.optionId;
+  //     } else {
+  //       answer = ans.string_answer;
+  //     }
+  //     setAnswerObj(prev => {
+  //       return {
+  //         ...prev,
+  //         [ans.questionId]: answer,
+  //       };
+  //     });
+  //   });
+  // }, [answersList]);
 
   // const handleShift = () => {
   //   const newLayoutName = layoutName === "default" ? "shift" : "default";
@@ -149,101 +149,44 @@ export default function Questionnaire() {
           fontFamily: 'Montserrat',
         }}
       >
-        {selectedLanguage === 'en' ? 'Please select the answers below' : 'অনুগ্ৰহ কৰি তলৰ উত্তৰসমূহ চয়ন কৰক'}
+        Please select the answers below
       </h1>
       {loading ? (
-        <Loader size="xl" variant="dots" />
+        <div className=" flex items-center gap-1">
+          <p
+            style={{
+              fontSize: '3rem',
+              textTransform: 'uppercase',
+              color: 'rgb(232, 80, 91)',
+              fontFamily: 'Montserrat',
+            }}
+          >
+            Loading Questions
+          </p>
+          <Loader size="xl" variant="dots" />
+        </div>
       ) : (
         <form onSubmit={onSubmit}>
-          {questionList.map(data => {
-            if (data.questionType === QuestionType.OPTIONS) {
-              return (
-                <div key={data.id}>
-                  <h2 className={styles.userdetailsheading}>
-                    {selectedLanguage === 'en' ? data.question_text_primary : data.question_text_secondary}
-                  </h2>
-                  <SegmentedControl
-                    style={{ marginTop: '1rem' }}
-                    fullWidth
-                    size="xl"
-                    color="red"
-                    value={answerObj[data.id]}
-                    withScrollArea={false}
-                    styles={{ dropdown: { maxHeight: 200, overflowY: 'auto' } }}
-                    data={data.options.map(option => ({
-                      value: option.id,
-                      label: selectedLanguage === 'en' ? option.option_val_primary : option.option_val_secondary,
-                    }))}
-                    defaultValue={data.options[0].id}
-                    onChange={(val: string) => {
-                      playClickSound();
-                      setAnswersList(prev => {
-                        const question = prev.find(i => i.questionId === data.id);
-                        if (question) {
-                          const filteredAnsList = prev.filter(i => i.questionId !== data.id);
-                          return [...filteredAnsList, { ...question, optionId: val }];
-                        }
-                        return prev;
-                      });
-                    }}
-                  />
-                </div>
-              );
-            } else {
-              return (
-                <div key={data.id}>
-                  <h2 className={styles.userdetailsheading}>
-                    {selectedLanguage === 'en' ? data.question_text_primary : data.question_text_secondary}
-                  </h2>
-                  <Textarea
-                    placeholder="Any Suggestion"
-                    withAsterisk
-                    size="xl"
-                    // onFocus={() => {
-                    //   setKeyboardVisibility(true);
-                    // }}
-                    onChange={(val: { currentTarget: { value: string } }) => {
-                      setAnswersList(prev => {
-                        const question = prev.find(i => i.questionId === data.id);
-                        if (question) {
-                          console.log({ question });
-                          const filteredAnsList = prev.filter(i => i.questionId !== data.id);
-                          return [
-                            ...filteredAnsList,
-                            {
-                              ...question,
-                              string_answer: val.currentTarget.value,
-                            },
-                          ];
-                        }
-                        return prev;
-                      });
-                    }}
-                  />
-                  {/* {keyboardVisibility && (
-                    <div
-                      className={styles.keyboardContainer}
-                      style={{ marginTop: "10px" }}
-                    >
-                      <Keyboard
-                        onChange={onKeyboardInputChange}
-                        onKeyPress={onKeyPress}
-                        layoutName={layoutName}
-                        theme={"hg-theme-default hg-layout-default myTheme"}
-                        buttonTheme={[
-                          {
-                            class: "hg-red",
-                            buttons:
-                              "1 2 3 4 5 6 7 8 9 0 {bksp} $ ( ) _ < > :  {tab} Q W E R T Y U I O P A S D F G H J K L ! # % & Z X C V B N M q w e r t y u i o p a s d f g h j k l z x c v b n m .com {shift} {enter} {lock} ; , [ ]  . ' * + /  = .COM @ {space} - ? ^ ` { | } ~ ",
-                          },
-                        ]}
-                      />
-                    </div>
-                  )} */}
-                </div>
-              );
-            }
-          })}
+          {questionList.map(data => (
+            <div key={data.id}>
+              <h2 className={styles.userdetailsheading}>{data.question_text_primary}</h2>
+              <SegmentedControl
+                style={{ marginTop: '1rem' }}
+                fullWidth
+                size="xl"
+                color="red"
+                value={answerObj[data.id]}
+                withScrollArea={false}
+                styles={{ dropdown: { maxHeight: 200, overflowY: 'auto' } }}
+                data={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
+                onChange={(val: string) => {
+                  playClickSound();
+                  console.log({ val });
+                  handleRatingChange(data.id, val);
+                }}
+              />
+            </div>
+          ))}
           <Group position="center" style={{ marginTop: '2rem' }}>
             <Button size="xl" uppercase type="submit" color="red" radius="md">
               Submit

@@ -69,14 +69,11 @@ const UserRegistrationForm = () => {
 
   const onSubmit = async (data: unknown) => {
     playClickSound();
-    console.log({ memberData });
-
     // if (!memberData) return;
     try {
       const result = await ServerAPI.createUser(data);
       setGender(GENDER.MALE);
       setDob(dob);
-      console.log({ result });
       setMemberData(result.data.user);
 
       // const sessionData = await ServerAPI.startTestSession({
@@ -267,7 +264,7 @@ const UserRegistrationForm = () => {
         </Group>
         {keyboardVisibility && inputField && (
           <div style={{ marginTop: '1rem' }}>
-            {selectedLanguage === 'as' ? (
+            {/* {selectedLanguage === 'as' ? (
               <Keyboard
                 inputName={inputField}
                 onChange={handleKeyboardChange}
@@ -289,34 +286,34 @@ const UserRegistrationForm = () => {
                   },
                 ]}
               />
-            ) : (
-              <Keyboard
-                inputName={inputField}
-                onChange={handleKeyboardChange}
-                onKeyPress={onKeyPress}
-                display={customDisplay}
-                theme={'hg-theme-default hg-layout-default myTheme'}
-                layoutName={layoutName}
-                buttonTheme={[
-                  {
-                    class: 'hg-red',
-                    buttons:
-                      "1 2 3 4 5 6 7 8 9 0 {shift} {enter} {bksp} {tab} {space} {lock} .com Q W E R T Y U I O P Q W E R T Y U I O P A S D F G H J K L Z X C V B N M q w e r t y u i o p a s d f g h j k l z x c v b n m . - .COM @ $ ( ) ! # % & ' * + / = ? ^ ` { | } ~ [ ] ; , \\ _ : < > ",
-                  },
-                  // {
-                  //   class: "hg-red",
-                  //   buttons: selectedLanguage
-                  //     ? keyboardLayouts[selectedLanguage][layoutName]
-                  //     : "",
-                  // },
+            ) : ( */}
+            <Keyboard
+              inputName={inputField}
+              onChange={handleKeyboardChange}
+              onKeyPress={onKeyPress}
+              display={customDisplay}
+              theme={'hg-theme-default hg-layout-default myTheme'}
+              layoutName={layoutName}
+              buttonTheme={[
+                {
+                  class: 'hg-red',
+                  buttons:
+                    "1 2 3 4 5 6 7 8 9 0 {shift} {enter} {bksp} {tab} {space} {lock} .com Q W E R T Y U I O P Q W E R T Y U I O P A S D F G H J K L Z X C V B N M q w e r t y u i o p a s d f g h j k l z x c v b n m . - .COM @ $ ( ) ! # % & ' * + / = ? ^ ` { | } ~ [ ] ; , \\ _ : < > ",
+                },
+                // {
+                //   class: "hg-red",
+                //   buttons: selectedLanguage
+                //     ? keyboardLayouts[selectedLanguage][layoutName]
+                //     : "",
+                // },
 
-                  {
-                    class: 'my-double-quote-button',
-                    buttons: '"',
-                  },
-                ]}
-              />
-            )}
+                {
+                  class: 'my-double-quote-button',
+                  buttons: '"',
+                },
+              ]}
+            />
+            {/* )} */}
           </div>
         )}
       </form>

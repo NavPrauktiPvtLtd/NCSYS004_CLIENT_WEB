@@ -32,8 +32,10 @@ export default function Home() {
     const fetchSerialNo = async () => {
       try {
         const { data } = await ServerAPI.getSerialNumber();
+        const id = data.serialNumber;
         setKioskId(data.serialNumber);
-        console.log(data.serialNumber);
+        localStorage.setItem('kioskId', id); //remove later
+        console.log('serial no.', data.serialNumber);
       } catch (error) {
         console.log(error);
       }
@@ -42,8 +44,12 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log({ kioskSerialID });
+    console.log('kioskid', { kioskSerialID });
   }, [kioskSerialID]);
+
+  const handleButton = () => {
+    navigate(PageRoutes.AUTH_USER_REGISTER_MEMEBER);
+  };
 
   return (
     <>
@@ -55,18 +61,14 @@ export default function Home() {
           {' '}
           Welcome
         </div>
-        <div className={styles.homepagepara}>
-          <p className={styles.paragraph} style={{ color: 'rgb(232, 80, 91)' }}>
-            Choose The Language
-          </p>
-        </div>
+
         <div className={styles.buttons}>
-          <button className={styles.button} onClick={() => changeLanguage('en')}>
-            ENGLISH
+          <button className={styles.button} onClick={handleButton}>
+            Start
           </button>
-          <button className={styles.button} onClick={() => changeLanguage('as')}>
+          {/* <button className={styles.button} onClick={() => changeLanguage('as')}>
             অসমীয়া
-          </button>
+          </button> */}
         </div>
       </div>
     </>
