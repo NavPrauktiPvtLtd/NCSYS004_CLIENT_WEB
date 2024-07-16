@@ -95,7 +95,7 @@ export const getQuestions = async (req: Request, res: Response, next: NextFuncti
       next(boom.badRequest('kiosk-client does not exist'));
       return;
     }
-    console.log('questions', kioskClient);
+    // console.log('questions', kioskClient);
 
     const finalResults = await Promise.all(
       kioskClient.Questionnaire.map(async questionResult => {
@@ -187,7 +187,7 @@ export const addAnswers = async (req: Request, res: Response, next: NextFunction
             ratingVal: rating_answer,
           },
         });
-      } else {
+      } else if (answerType === 'Options') {
         if (!optionId) {
           next(boom.badRequest('options not found'));
           return;
@@ -200,6 +200,8 @@ export const addAnswers = async (req: Request, res: Response, next: NextFunction
             optionId,
           },
         });
+      } else {
+        res.sendStatus(401);
       }
     });
     // res.status(201).send({ answerList });
