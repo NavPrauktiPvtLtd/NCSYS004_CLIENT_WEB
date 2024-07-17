@@ -38,7 +38,7 @@ export const verifyJWT = async (req: Request, res: Response, next: NextFunction)
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
     req.currentUser = payload;
-    logger.debug(payload);
+    // logger.debug(payload);
     next();
   } catch (error) {
     logger.error(error);

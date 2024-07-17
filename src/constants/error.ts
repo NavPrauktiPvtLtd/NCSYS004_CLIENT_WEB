@@ -4,4 +4,5 @@ export const ERRORS = {
   NOT_AUTHORIZED: 'Not authorized',
   INVALID_QUERY_PARAMETERS: 'Invalid query parameters',
   INVALID_FILE_UPLOAD: 'Invalid file payload',
+  INVALID_PARAMS: 'Invalid params',
 } as const;

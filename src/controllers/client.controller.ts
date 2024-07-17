@@ -14,7 +14,7 @@ export const registerClient = async (req: Request, res: Response, next: NextFunc
     const result = await kioskClientRegistrationSchema.safeParseAsync(req.body);
 
     if (result.success === false) {
-      logger.error(result.error);
+      logger.error(JSON.stringify(result.error));
       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
       return;
     }
@@ -100,7 +100,7 @@ export const clientLogin = async (req: Request, res: Response, next: NextFunctio
     const result = await userLoginSchema.safeParseAsync(req.body);
 
     if (result.success === false) {
-      logger.error(result.error);
+      logger.error(JSON.stringify(result.error));
       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
       return;
     }
@@ -167,35 +167,7 @@ export const getQuestionsAndAnswers = async (req: Request, res: Response, next: 
         },
       },
     });
-    // const result = await prisma.user.findMany({
-    //   include: {
-    //     UserAnswer: {
-    //       include: {
-    //         questionId_fk: true,
-    //         optionId_fk: true,
 
-    //       },
-    //     },
-    //   },
-    // });
-
-    // const data = result.map(user => ({
-    //   userId: user.id,
-    //   userName: user.name,
-    //   answers: user.UserAnswer.map(answer => ({
-    //     questionId: answer.questionId_fk.id,
-    //     questionTextPrimary: answer.questionId_fk.question_text_primary,
-    //     // questionTextSecondary: answer.questionId_fk.question_text_secondary,
-    //     answerType: answer.type,
-    //     answerValue:
-    //       answer.strVal ||
-    //       answer.ratingVal ||
-    //       (answer.optionId_fk && answer.optionId_fk.option_val_primary) ||
-    //       // (answer.optionId_fk && answer.optionId_fk.option_val_primary && answer.optionId_fk?.option_val_secondary) ||
-    //       // eslint-disable-next-line unicorn/no-null
-    //       null,
-    //   })),
-    // }));
     res.send({ data: questionsAndAnswers });
   } catch (error) {
     logger.error(error);

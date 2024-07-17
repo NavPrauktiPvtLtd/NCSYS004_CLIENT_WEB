@@ -53,7 +53,7 @@ export const getQuestions = async (req: Request, res: Response, next: NextFuncti
     const result = await kioskIdSchema.safeParseAsync(req.query);
 
     if (result.success === false) {
-      logger.error(result.error);
+      logger.error(JSON.stringify(result.error));
       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
       return;
     }
@@ -217,8 +217,7 @@ export const addAnswers = async (req: Request, res: Response, next: NextFunction
 //     // TODO verify if the member exist for the current user
 
 //     if (result.success === false) {
-//       logger.error(result.error);
-//       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
+// logger.error(JSON.stringify(result.error));//       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
 //       return;
 //     }
 

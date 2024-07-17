@@ -15,7 +15,7 @@ export const kioskAdminLogin = async (req: Request, res: Response, next: NextFun
     const result = await kioskLoginSchema.safeParseAsync(req.body);
 
     if (result.success === false) {
-      logger.error(result.error);
+      logger.error(JSON.stringify(result.error));
       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
       return;
     }

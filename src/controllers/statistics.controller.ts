@@ -75,7 +75,7 @@ export const startTestSession = async (req: Request, res: Response, next: NextFu
     const result = await startStatisticsSchema.safeParseAsync(req.body);
 
     if (result.success === false) {
-      logger.error(result.error);
+      logger.error(JSON.stringify(result.error));
       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
       return;
     }
@@ -128,7 +128,7 @@ export const endTestSession = async (req: Request, res: Response, next: NextFunc
     const result = await endStatisticsSchema.safeParseAsync(req.query);
 
     if (result.success === false) {
-      logger.error(result.error);
+      logger.error(JSON.stringify(result.error));
       next(boom.badRequest(ERRORS.INVALID_QUERY_PARAMETERS));
       return;
     }

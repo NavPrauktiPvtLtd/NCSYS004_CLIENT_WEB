@@ -62,7 +62,7 @@ export const adminLogin = async (req: Request, res: Response, next: NextFunction
       next(boom.unauthorized('Admin does not exists'));
       return;
     }
-    logger.debug(admin);
+    // logger.debug(admin);
     // Compare the password
     const passwordMatch = await Bcrypt.compare(password, admin.password);
 
@@ -87,7 +87,7 @@ export const registerKiosk = async (req: Request, res: Response, next: NextFunct
     const result = await kioskRegistrationSchema.safeParseAsync(req.body);
 
     if (result.success === false) {
-      logger.error(result.error);
+      logger.error(JSON.stringify(result.error));
       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
       return;
     }
@@ -166,8 +166,8 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
     const result = await paginationSchema.safeParseAsync(req.query);
 
     if (result.success === false) {
-      logger.error(result.error);
-      next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
+      logger.error(JSON.stringify(result.error));
+      next(boom.badRequest(ERRORS.INVALID_QUERY_PARAMETERS));
       return;
     }
 
@@ -290,8 +290,8 @@ export const kioskClientList = async (req: Request, res: Response, next: NextFun
     const result = await paginationSchema.safeParseAsync(req.query);
 
     if (result.success === false) {
-      logger.error(result.error);
-      next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
+      logger.error(JSON.stringify(result.error));
+      next(boom.badRequest(ERRORS.INVALID_QUERY_PARAMETERS));
       return;
     }
 
@@ -355,8 +355,8 @@ export const getAllKiosk = async (req: Request, res: Response, next: NextFunctio
     const result = await paginationSchema.safeParseAsync(req.query);
 
     if (result.success === false) {
-      logger.error(result.error);
-      next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
+      logger.error(JSON.stringify(result.error));
+      next(boom.badRequest(ERRORS.INVALID_QUERY_PARAMETERS));
       return;
     }
 
@@ -472,7 +472,7 @@ export const usersPerKiosk = async (req: Request, res: Response, next: NextFunct
     // const { userType } = req.currentUser;
     const result = await kioskIdSchema.safeParseAsync(req.query);
     if (result.success === false) {
-      logger.error(result.error);
+      logger.error(JSON.stringify(result.error));
       next(boom.badRequest(ERRORS.INVALID_QUERY_PARAMETERS));
       return;
     }
@@ -560,7 +560,7 @@ export const addQuestions = async (req: Request, res: Response, next: NextFuncti
     const result = await questionSchema.safeParseAsync(req.body);
 
     if (result.success === false) {
-      logger.error(result.error);
+      logger.error(JSON.stringify(result.error));
       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
       return;
     }
@@ -634,8 +634,8 @@ export const getQuestions = async (req: Request, res: Response, next: NextFuncti
     const { userId: kioskClientId, userType } = req.currentUser;
     const result = await paginationSchema.safeParseAsync(req.query);
     if (result.success === false) {
-      logger.error(result.error);
-      next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
+      logger.error(JSON.stringify(result.error));
+      next(boom.badRequest(ERRORS.INVALID_QUERY_PARAMETERS));
       return;
     }
 
@@ -728,8 +728,8 @@ export const deleteQuestion = async (req: Request, res: Response, next: NextFunc
     const result = await idSchema.safeParseAsync(req.params);
 
     if (result.success === false) {
-      logger.error(result.error);
-      next(boom.badRequest(ERRORS.INVALID_QUERY_PARAMETERS));
+      logger.error(JSON.stringify(result.error));
+      next(boom.badRequest(ERRORS.INVALID_PARAMS));
       return;
     }
     const { id: questionId } = result.data;
@@ -778,7 +778,7 @@ export const editQuestions = async (req: Request, res: Response, next: NextFunct
     const result = await editQuestionSchema.safeParseAsync(req.body);
 
     if (result.success === false) {
-      logger.error(result.error);
+      logger.error(JSON.stringify(result.error));
       next(boom.badRequest(ERRORS.INVALID_REQUEST_PAYLOAD));
       return;
     }
@@ -787,7 +787,7 @@ export const editQuestions = async (req: Request, res: Response, next: NextFunct
 
     if (results.success === false) {
       logger.error(results.error);
-      next(boom.badRequest(ERRORS.INVALID_QUERY_PARAMETERS));
+      next(boom.badRequest(ERRORS.INVALID_PARAMS));
       return;
     }
 
@@ -902,7 +902,7 @@ export const validateLink = async (req: Request, res: Response, next: NextFuncti
     const results = await idSchema.safeParseAsync(req.params);
     if (results.success === false) {
       logger.error(results.error);
-      next(boom.badRequest(ERRORS.INVALID_QUERY_PARAMETERS));
+      next(boom.badRequest(ERRORS.INVALID_PARAMS));
       return;
     }
     const { id } = results.data;
@@ -925,35 +925,94 @@ export const validateLink = async (req: Request, res: Response, next: NextFuncti
 };
 export const getQuestionsAndAnswers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await prisma.user.findMany({
-      include: {
-        UserAnswer: {
-          include: {
-            questionId_fk: true,
-            optionId_fk: true,
+    // const result = await prisma.user.findMany({
+    //   include: {
+    //     UserAnswer: {
+    //       include: {
+    //         questionId_fk: true,
+    //         optionId_fk: true,
+    //       },
+    //     },
+    //   },
+    // });
+
+    // const data = result.map(user => ({
+    //   userId: user.id,
+    //   userName: user.name,
+    //   answers: user.UserAnswer.map(answer => ({
+    //     questionId: answer.questionId_fk.id,
+    //     questionTextPrimary: answer.questionId_fk.question_text_primary,
+    //     // questionTextSecondary: answer.questionId_fk.question_text_secondary,
+    //     answerType: answer.type,
+    //     answerValue:
+    //       answer.strVal ||
+    //       answer.ratingVal ||
+    //       (answer.optionId_fk && answer.optionId_fk.option_val_primary) ||
+    //       // (answer.optionId_fk && answer.optionId_fk.option_val_primary && answer.optionId_fk?.option_val_secondary) ||
+    //       // eslint-disable-next-line unicorn/no-null
+    //       null,
+    //   })),
+    // }));
+    const result = await idSchema.safeParseAsync(req.query);
+
+    if (result.success === false) {
+      logger.error(JSON.stringify(result.error));
+      next(boom.badRequest(ERRORS.INVALID_QUERY_PARAMETERS));
+      return;
+    }
+    const { id: kioskClientId } = result.data;
+    const results = await prisma.kioskClient.findUnique({
+      where: { id: kioskClientId },
+      select: {
+        Questionnaire: {
+          select: {
+            question_text_primary: true,
+            question_text_secondary: true,
+            UserAnswer: {
+              select: {
+                userId_fk: {
+                  select: {
+                    name: true,
+                    // phoneNumber: true,
+                  },
+                },
+                type: true,
+                strVal: true,
+                ratingVal: true,
+                // created_at: true,
+                optionId_fk: {
+                  select: {
+                    option_val_primary: true,
+                    option_val_secondary: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
     });
+    res.send({ data: results });
+  } catch (error) {
+    logger.error(error);
+    next(boom.badRequest(ERRORS.INTERNAL_SERVER_ERROR));
+  }
+};
 
-    const data = result.map(user => ({
-      userId: user.id,
-      userName: user.name,
-      answers: user.UserAnswer.map(answer => ({
-        questionId: answer.questionId_fk.id,
-        questionTextPrimary: answer.questionId_fk.question_text_primary,
-        // questionTextSecondary: answer.questionId_fk.question_text_secondary,
-        answerType: answer.type,
-        answerValue:
-          answer.strVal ||
-          answer.ratingVal ||
-          (answer.optionId_fk && answer.optionId_fk.option_val_primary) ||
-          // (answer.optionId_fk && answer.optionId_fk.option_val_primary && answer.optionId_fk?.option_val_secondary) ||
-          // eslint-disable-next-line unicorn/no-null
-          null,
-      })),
-    }));
-    res.send({ data });
+export const kioskClients = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const clients = await prisma.kioskClient.findMany({
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
+    const results = clients.map(client => {
+      return {
+        id: client.id,
+        name: client.name,
+      };
+    });
+    res.send({ kioskClient: results });
   } catch (error) {
     logger.error(error);
     next(boom.badRequest(ERRORS.INTERNAL_SERVER_ERROR));

@@ -31,6 +31,8 @@ adminRouter.post('/generate-link', verifyJWT, checkUserType(UserType.ADMIN), adm
 
 adminRouter.get('/validate-link/:id', adminController.validateLink);
 
+adminRouter.get('/clients', verifyJWT, checkUserType(UserType.ADMIN), adminController.kioskClients);
+
 adminRouter.get(
   '/questions-and-answers',
   verifyJWT,
