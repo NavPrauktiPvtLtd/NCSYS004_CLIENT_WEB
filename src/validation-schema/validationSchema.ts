@@ -123,3 +123,7 @@ export const userRegistrationSchema = z.object({
   gender: z.enum(['male', 'female', 'others']),
   phoneNumber: z.string().length(10).regex(/^\d+$/, { message: 'Invalid mobile number ' }),
 });
+
+export const kioskClientIdSchema = paginationSchema.extend({
+  client_id: z.string().optional(),
+});

@@ -9,10 +9,9 @@ const clientRouter = Router();
 clientRouter.post('/register', clientController.registerClient);
 
 clientRouter.post('/auth/login', clientController.clientLogin);
-clientRouter.get(
-  '/questions-and-answers',
-  verifyJWT,
-  checkUserType(UserType.CLIENT),
-  clientController.getQuestionsAndAnswers
-);
+
+clientRouter.get('/answers/:id', verifyJWT, checkUserType(UserType.CLIENT), clientController.getAnswersById);
+
+clientRouter.get('/avg-rating', verifyJWT, checkUserType(UserType.CLIENT), clientController.averageRatingCount);
+
 export default clientRouter;

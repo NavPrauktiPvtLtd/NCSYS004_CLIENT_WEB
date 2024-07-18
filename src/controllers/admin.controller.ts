@@ -22,6 +22,7 @@ import { UserType } from '../middlewares/jwtValidator.middleware';
 import {
   editQuestionSchema,
   idSchema,
+  kioskClientIdSchema,
   kioskIdSchema,
   kioskRegistrationSchema,
   paginationSchema,
@@ -629,18 +630,17 @@ export const addQuestions = async (req: Request, res: Response, next: NextFuncti
   }
 };
 
-export const getQuestions = async (req: Request, res: Response, next: NextFunction) => {
+export const getQuestionList = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { userId: kioskClientId, userType } = req.currentUser;
-    const result = await paginationSchema.safeParseAsync(req.query);
+    const result = await kioskClientIdSchema.safeParseAsync(req.query);
     if (result.success === false) {
       logger.error(JSON.stringify(result.error));
       next(boom.badRequest(ERRORS.INVALID_QUERY_PARAMETERS));
       return;
     }
 
-    const { limit, offset } = result.data;
-
+    const { limit, offset, client_id } = result.data;
+    const { userId: kioskClientId, userType } = req.currentUser;
     if (userType === UserType.CLIENT) {
       const questionnaire = await prisma.questionnaire.findMany({
         where: {
@@ -679,42 +679,60 @@ export const getQuestions = async (req: Request, res: Response, next: NextFuncti
         },
       });
       res.send({ questions: finalResults, count: record._count.id });
+    } else if (userType === UserType.ADMIN) {
+      if (client_id) {
+        const idExists = await prisma.kioskClient.findFirst({
+          where: {
+            id: client_id,
+          },
+        });
+        if (!idExists) {
+          next(boom.notFound('client does not exist'));
+          return;
+        }
+        const questionnaire = await prisma.questionnaire.findMany({
+          where: {
+            is_active: true,
+            kioskClientId: client_id,
+          },
+          include: {
+            KioskClient: true,
+          },
+          take: limit,
+          skip: offset,
+          orderBy: {
+            created_at: 'asc',
+          },
+        });
+        const finalResults = await Promise.all(
+          questionnaire.map(async question => {
+            if (question.questionType === 'Options') {
+              const options = await prisma.questionsOption.findMany({
+                where: {
+                  questionId: question.id,
+                },
+              });
+              return { ...question, options };
+            }
+            return question;
+          })
+        );
+        const record = await prisma.questionnaire.aggregate({
+          where: {
+            is_active: true,
+          },
+          _count: {
+            id: true,
+          },
+        });
+        console.log('admin data');
+
+        res.send({ questions: finalResults, count: record._count.id });
+      } else {
+        res.sendStatus(404);
+      }
     } else {
-      const questionnaire = await prisma.questionnaire.findMany({
-        where: {
-          is_active: true,
-        },
-        include: {
-          KioskClient: true,
-        },
-        take: limit,
-        skip: offset,
-        orderBy: {
-          created_at: 'asc',
-        },
-      });
-      const finalResults = await Promise.all(
-        questionnaire.map(async question => {
-          if (question.questionType === 'Options') {
-            const options = await prisma.questionsOption.findMany({
-              where: {
-                questionId: question.id,
-              },
-            });
-            return { ...question, options };
-          }
-          return question;
-        })
-      );
-      const record = await prisma.questionnaire.aggregate({
-        where: {
-          is_active: true,
-        },
-        _count: {
-          id: true,
-        },
-      });
-      res.send({ questions: finalResults, count: record._count.id });
+      res.sendStatus(404);
     }
   } catch (error) {
     logger.error(error);
@@ -923,76 +941,44 @@ export const validateLink = async (req: Request, res: Response, next: NextFuncti
     next(boom.badRequest(ERRORS.INTERNAL_SERVER_ERROR));
   }
 };
-export const getQuestionsAndAnswers = async (req: Request, res: Response, next: NextFunction) => {
+export const getAnswersbyId = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    // const result = await prisma.user.findMany({
-    //   include: {
-    //     UserAnswer: {
-    //       include: {
-    //         questionId_fk: true,
-    //         optionId_fk: true,
-    //       },
-    //     },
-    //   },
-    // });
-
-    // const data = result.map(user => ({
-    //   userId: user.id,
-    //   userName: user.name,
-    //   answers: user.UserAnswer.map(answer => ({
-    //     questionId: answer.questionId_fk.id,
-    //     questionTextPrimary: answer.questionId_fk.question_text_primary,
-    //     // questionTextSecondary: answer.questionId_fk.question_text_secondary,
-    //     answerType: answer.type,
-    //     answerValue:
-    //       answer.strVal ||
-    //       answer.ratingVal ||
-    //       (answer.optionId_fk && answer.optionId_fk.option_val_primary) ||
-    //       // (answer.optionId_fk && answer.optionId_fk.option_val_primary && answer.optionId_fk?.option_val_secondary) ||
-    //       // eslint-disable-next-line unicorn/no-null
-    //       null,
-    //   })),
-    // }));
-    const result = await idSchema.safeParseAsync(req.query);
+    const result = await idSchema.safeParseAsync(req.params);
 
     if (result.success === false) {
       logger.error(JSON.stringify(result.error));
-      next(boom.badRequest(ERRORS.INVALID_QUERY_PARAMETERS));
+      next(boom.badRequest(ERRORS.INVALID_PARAMS));
       return;
     }
-    const { id: kioskClientId } = result.data;
-    const results = await prisma.kioskClient.findUnique({
-      where: { id: kioskClientId },
+    const { id: questionId } = result.data;
+    const questionsAndAnswers = await prisma.questionnaire.findFirst({
+      where: { id: questionId },
       select: {
-        Questionnaire: {
+        question_text_primary: true,
+        question_text_secondary: true,
+        UserAnswer: {
           select: {
-            question_text_primary: true,
-            question_text_secondary: true,
-            UserAnswer: {
+            userId_fk: {
               select: {
-                userId_fk: {
-                  select: {
-                    name: true,
-                    // phoneNumber: true,
-                  },
-                },
-                type: true,
-                strVal: true,
-                ratingVal: true,
-                // created_at: true,
-                optionId_fk: {
-                  select: {
-                    option_val_primary: true,
-                    option_val_secondary: true,
-                  },
-                },
+                name: true,
+                // phoneNumber: true,
+              },
+            },
+            type: true,
+            strVal: true,
+            ratingVal: true,
+            // created_at: true,
+            optionId_fk: {
+              select: {
+                option_val_primary: true,
+                option_val_secondary: true,
               },
             },
           },
         },
       },
     });
-    res.send({ data: results });
+    res.send({ data: questionsAndAnswers });
   } catch (error) {
     logger.error(error);
     next(boom.badRequest(ERRORS.INTERNAL_SERVER_ERROR));
@@ -1013,6 +999,44 @@ export const kioskClients = async (req: Request, res: Response, next: NextFuncti
       };
     });
     res.send({ kioskClient: results });
+  } catch (error) {
+    logger.error(error);
+    next(boom.badRequest(ERRORS.INTERNAL_SERVER_ERROR));
+  }
+};
+
+export const averageRatingCount = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await idSchema.safeParseAsync(req.query);
+
+    if (result.success === false) {
+      logger.error(JSON.stringify(result.error));
+      next(boom.badRequest(ERRORS.INVALID_QUERY_PARAMETERS));
+      return;
+    }
+    const { id: kioskClientId } = result.data;
+    const data = await prisma.kioskClient.findFirst({
+      where: {
+        id: kioskClientId,
+      },
+      include: {
+        Questionnaire: {
+          select: {
+            id: true,
+            question_text_primary: true,
+            _count: {
+              select: { UserAnswer: true },
+            },
+            UserAnswer: {
+              select: {
+                ratingVal: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    res.send({ avg: data });
   } catch (error) {
     logger.error(error);
     next(boom.badRequest(ERRORS.INTERNAL_SERVER_ERROR));

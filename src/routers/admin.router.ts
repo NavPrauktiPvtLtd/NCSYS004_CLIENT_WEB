@@ -21,7 +21,7 @@ adminRouter.get('/kiosk-clients', verifyJWT, adminController.kioskClientList);
 
 adminRouter.post('/question', verifyJWT, checkUserType(UserType.CLIENT), adminController.addQuestions);
 
-adminRouter.get('/question-list', verifyJWT, adminController.getQuestions);
+adminRouter.get('/question-list', verifyJWT, adminController.getQuestionList);
 
 adminRouter.post('/edit-question/:id', verifyJWT, checkUserType(UserType.CLIENT), adminController.editQuestions);
 
@@ -33,11 +33,8 @@ adminRouter.get('/validate-link/:id', adminController.validateLink);
 
 adminRouter.get('/clients', verifyJWT, checkUserType(UserType.ADMIN), adminController.kioskClients);
 
-adminRouter.get(
-  '/questions-and-answers',
-  verifyJWT,
-  checkUserType(UserType.ADMIN),
-  adminController.getQuestionsAndAnswers
-);
+adminRouter.get('/answers/:id', verifyJWT, checkUserType(UserType.ADMIN), adminController.getAnswersbyId);
+
+adminRouter.get('/avg-rating', verifyJWT, checkUserType(UserType.ADMIN), adminController.averageRatingCount);
 
 export default adminRouter;

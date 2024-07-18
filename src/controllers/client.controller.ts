@@ -7,7 +7,7 @@ import logger from '../config/logger';
 import prisma from '../config/prisma';
 import { ERRORS } from '../constants/error';
 import { UserType } from '../middlewares/jwtValidator.middleware';
-import { kioskClientRegistrationSchema, userLoginSchema } from '../validation-schema/validationSchema';
+import { idSchema, kioskClientRegistrationSchema, userLoginSchema } from '../validation-schema/validationSchema';
 
 export const registerClient = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -59,13 +59,13 @@ export const registerClient = async (req: Request, res: Response, next: NextFunc
         message += 'email';
       }
       if (usernameExists) {
-        message += ' username';
+        message += 'username';
       }
       if (phoneExists) {
-        message += ' phone';
+        message += 'phone';
       }
       if (panExists) {
-        message += ' pan';
+        message += 'pan';
       }
       next(boom.conflict(message));
       return;
@@ -133,42 +133,78 @@ export const clientLogin = async (req: Request, res: Response, next: NextFunctio
     logger.error(error);
   }
 };
-export const getQuestionsAndAnswers = async (req: Request, res: Response, next: NextFunction) => {
+
+export const getAnswersById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { userId: kioskClientId } = req.currentUser;
-    const questionsAndAnswers = await prisma.kioskClient.findUnique({
-      where: { id: kioskClientId },
+    const result = await idSchema.safeParseAsync(req.params);
+
+    if (result.success === false) {
+      logger.error(JSON.stringify(result.error));
+      next(boom.badRequest(ERRORS.INVALID_PARAMS));
+      return;
+    }
+    const { id: questionId } = result.data;
+
+    // const { userId: kioskClientId } = req.currentUser;
+    const questionsAndAnswers = await prisma.questionnaire.findFirst({
+      where: { id: questionId },
       select: {
-        Questionnaire: {
+        question_text_primary: true,
+        question_text_secondary: true,
+        UserAnswer: {
           select: {
-            question_text_primary: true,
-            question_text_secondary: true,
-            UserAnswer: {
+            userId_fk: {
               select: {
-                userId_fk: {
-                  select: {
-                    name: true,
-                    // phoneNumber: true,
-                  },
-                },
-                type: true,
-                strVal: true,
-                ratingVal: true,
-                // created_at: true,
-                optionId_fk: {
-                  select: {
-                    option_val_primary: true,
-                    option_val_secondary: true,
-                  },
-                },
+                name: true,
+                // phoneNumber: true,
+              },
+            },
+            type: true,
+            strVal: true,
+            ratingVal: true,
+            // created_at: true,
+            optionId_fk: {
+              select: {
+                option_val_primary: true,
+                option_val_secondary: true,
               },
             },
           },
         },
       },
     });
-
     res.send({ data: questionsAndAnswers });
+  } catch (error) {
+    logger.error(error);
+    next(boom.badRequest(ERRORS.INTERNAL_SERVER_ERROR));
+  }
+};
+
+export const averageRatingCount = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId: kioskClientId } = req.currentUser;
+    const data = await prisma.kioskClient.findFirst({
+      where: {
+        id: kioskClientId,
+      },
+      include: {
+        Questionnaire: {
+          select: {
+            id: true,
+            question_text_primary: true,
+            _count: {
+              select: { UserAnswer: true },
+            },
+            UserAnswer: {
+              select: {
+                ratingVal: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    res.send({ avg: data });
   } catch (error) {
     logger.error(error);
     next(boom.badRequest(ERRORS.INTERNAL_SERVER_ERROR));
