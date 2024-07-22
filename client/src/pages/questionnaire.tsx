@@ -1,6 +1,6 @@
 import styles from '../styles/Details.module.css';
 import 'react-simple-keyboard/build/css/index.css';
-import { Button, Group, Loader, SegmentedControl } from '@mantine/core';
+import { Button, Group, SegmentedControl } from '@mantine/core';
 import { PageRoutes, QuestionnaireAnswers, Questions, QuestionType } from '../../@types/index.';
 import useClickSound from '@/hooks/useClickSound';
 import ServerAPI from '../../API/ServerAPI';
@@ -50,6 +50,7 @@ export default function Questionnaire() {
     }
   }, [memberData]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleRatingChange = (id: any, value: any) => {
     setAnswerObj(prev => ({ ...prev, [id]: value }));
   };
