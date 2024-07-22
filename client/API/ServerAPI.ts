@@ -3,6 +3,7 @@ import { SystemAdminLoginData } from '../validation/index';
 import { ServerAxiosInstance } from './config';
 import { Questions } from '../@types/index.';
 import { QuestionnaireAnswers } from '../@types/index.';
+import axios from 'axios';
 
 interface AdminLogin extends SystemAdminLoginData {
   serial_no: string;
@@ -13,7 +14,7 @@ interface StartTestSessionResponse {
 }
 class ServerAPI {
   static getSerialNumber = async () => {
-    return ServerAxiosInstance.get<{ serialNumber: string }>('/kiosk/serial-number');
+    return axios.get<{ serialNumber: string }>('http://localhost:5050/api/serial-number');
   };
 
   static adminLogin = async (data: AdminLogin) => {

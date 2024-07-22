@@ -1,16 +1,33 @@
-FROM node:16
+# Stage 1: Build the client
+FROM node:18 AS client-build
 
 WORKDIR /app
 
-USER root
+# Copy client package files and install dependencies
+COPY client/package*.json ./client/
+RUN cd client && npm install
 
-ADD package*.json ./
+# Copy the client source code and build it
+COPY client/ ./client/
+RUN cd client && npm run build
 
-RUN npm i
+# Stage 2: Build the server
+FROM node:18 AS server-build
 
+WORKDIR /app
+
+# Copy server package files and install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy the server source code
 COPY . ./
 
-RUN npm install 
+# Copy the built client files from the previous stage
+COPY --from=client-build /app/client/dist ./client/dist
 
+# Expose the desired port
+EXPOSE 5050
 
-RUN npm run build
+# Start the server
+CMD ["node", "index.js"]

@@ -1,11 +1,11 @@
-version: "3.7"
- 
+version: '3.7'
+
 services:
   app-prod:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: express-app-prod
+    container_name: feedback-kiosk-prod
     ports:
+      - '5050:5050'
     command: npm start
-

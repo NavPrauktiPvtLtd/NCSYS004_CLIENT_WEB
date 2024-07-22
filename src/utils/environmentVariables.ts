@@ -16,6 +16,7 @@ export const environmentVariablesSchema = z.object({
   ADMIN_EMAIL: z.string(),
   ADMIN_PASSWORD: z.string(),
   SERIAL_NO: z.string(),
+  NODE_ENV: z.string(),
   // KIOSK_ADMIN_EMAIL: z.string(),
   // KIOSK_ADMIN_PASSWORD: z.string(),
 });

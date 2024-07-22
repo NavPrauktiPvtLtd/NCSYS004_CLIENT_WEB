@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Address" ALTER COLUMN "kioskId" DROP NOT NULL,
-ALTER COLUMN "kioskClientId" DROP NOT NULL;

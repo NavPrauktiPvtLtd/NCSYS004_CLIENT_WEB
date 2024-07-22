@@ -1,15 +1,15 @@
-version: "3.7"
- 
+version: '3.7'
+
 services:
   app-dev:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: express-app-dev
-    volumes:
-      # - /app/node_modules
-      - ./src:/app/src
+    container_name: feedback-kiosk-dev
+    # volumes:
+    #   - ./node_modules:/app/node_modules
+    #   - ./src:/app/src
+    #   - ./prisma:/app/prisma
     ports:
-      - "8080:8080"
-      - "8181:8181"
+      - '5050:5050'
     command: npm run dev
