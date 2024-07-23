@@ -1,5 +1,7 @@
 # Stage 1: Build the client
-FROM node:18 AS client-build
+FROM node:20.10.0-alpine AS client-build
+
+# ENV NODE_ENV=development
 
 WORKDIR /app
 
@@ -12,7 +14,7 @@ COPY client/ ./client/
 RUN cd client && npm run build
 
 # Stage 2: Build the server
-FROM node:18 AS server-build
+FROM node:20.10.0-alpine AS server-build
 
 WORKDIR /app
 
@@ -30,4 +32,4 @@ COPY --from=client-build /app/client/dist ./client/dist
 EXPOSE 5050
 
 # Start the server
-CMD ["node", "index.js"]
+# CMD ["node", "index.js"]
