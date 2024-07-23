@@ -29,6 +29,10 @@ export default function Questionnaire() {
 
   const { sessionID } = useTestSessionStore();
 
+  // useEffect(() => {
+  //   console.log({ answerObj });
+  // }, [answerObj]);
+
   useEffect(() => {
     setLoading(true);
     if (!memberData) {
@@ -41,6 +45,14 @@ export default function Questionnaire() {
             data: { questions },
           } = await ServerAPI.getQuestionList(kioskSerialID);
           setQuestionList(questions);
+
+          // Initialize answerObj with default value of 1 for each question
+          const defaultAnswers = questions.reduce((acc: { [key: string]: string }, question: Questions) => {
+            acc[question.id] = '1';
+            return acc;
+          }, {});
+          setAnswerObj(defaultAnswers);
+
           setLoading(false);
         } catch (error) {
           console.log(error);
