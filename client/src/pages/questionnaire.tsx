@@ -87,7 +87,7 @@ export default function Questionnaire() {
 
   return (
     <div className={styles.contents}>
-      <div style={{ position: 'absolute', top: '5%', left: '5%' }}>
+      <div style={{ position: 'fixed', top: '5%', left: '5%' }}>
         {/* <div
         style={{
           display: 'flex',
