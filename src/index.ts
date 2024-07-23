@@ -6,19 +6,29 @@ import path from 'path';
 import logger from './config/logger';
 import errorHandler from './middlewares/errorHandler.middleware';
 import notFoundHandler from './middlewares/notFoundHandler.middleware';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const PORT = process.env.PORT || 5050;
 
 const app = express();
 
 //* Middilewares
-app.use(helmet());
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: ["'self'"],
+//       connectSrc: ['*'], // Allow all URLs for connect-src
+//       // You can customize other directives as needed
+//     },
+//   })
+// );
 app.use(morgan('tiny'));
 app.use(cors());
 app.use(express.json());
 
 //* Register routers
-app.use(express.static(path.join(__dirname, '/client/dist')));
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 app.get('/api/serial-number', async (_, res: Response): Promise<void> => {
   try {
