@@ -88,6 +88,14 @@ export default function Questionnaire() {
   return (
     <div className={styles.contents}>
       <div style={{ position: 'absolute', top: '5%', left: '5%' }}>
+        {/* <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+        }}
+      > */}
         <HomeButton />
       </div>
 
