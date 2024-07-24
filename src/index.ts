@@ -1,12 +1,13 @@
 import cors from 'cors';
+import dotenv from 'dotenv';
 import express, { Response } from 'express';
-import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
+
 import logger from './config/logger';
 import errorHandler from './middlewares/errorHandler.middleware';
 import notFoundHandler from './middlewares/notFoundHandler.middleware';
-import dotenv from 'dotenv';
+
 dotenv.config();
 
 const PORT = process.env.PORT || 5050;
