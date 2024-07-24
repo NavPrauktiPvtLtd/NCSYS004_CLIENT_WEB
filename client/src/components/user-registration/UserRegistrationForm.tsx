@@ -223,8 +223,16 @@ const UserRegistrationForm = () => {
           onChange={onInputChange}
           onClick={handleNumberInputClick}
         />
+        <Group position="center" mt="md">
+          <button type="submit" className={styles.button}>
+            Submit
+            <span style={{ paddingLeft: '10px' }}>
+              <FaChevronRight />
+            </span>
+          </button>
+        </Group>
         {keyboardNumberVisibility && (
-          <div className={styles.keyboardContainer}>
+          <div className={styles.keyboardContainer} style={{ marginTop: '1rem' }}>
             <Keyboard
               onChange={input => setKeyboardInput(input)}
               onKeyPress={onNumberKeyPress}
@@ -241,14 +249,6 @@ const UserRegistrationForm = () => {
             />
           </div>
         )}
-        <Group position="center" mt="md">
-          <button type="submit" className={styles.button}>
-            Submit
-            <span style={{ paddingLeft: '10px' }}>
-              <FaChevronRight />
-            </span>
-          </button>
-        </Group>
         {keyboardVisibility && inputField && (
           <div style={{ marginTop: '1rem' }}>
             <Keyboard
