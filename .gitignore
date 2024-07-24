@@ -1,7 +1,7 @@
 node_modules
 dist
 coverage
-.env
+# .env
 # Logs
 client/logs
 client/*.log
@@ -12,7 +12,7 @@ client/pnpm-debug.log*
 client/lerna-debug.log*
 
 client/node_modules
-client/*.local
+# client/*.local
 
 # Editor directories and files
 client/.vscode/*
