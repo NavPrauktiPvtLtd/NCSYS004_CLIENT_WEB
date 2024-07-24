@@ -18,7 +18,7 @@ import '../../styles/keyboard.css';
 import { useTranslation } from 'react-i18next';
 import { useKioskSerialNumberStore } from '@/store/store';
 import { useTestSessionStore } from '@/store/store';
-import { toast, ToastBar, Toaster } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 const UserRegistrationForm = () => {
   const [gender, setGender] = useState<GENDER>(GENDER.MALE);
@@ -173,7 +173,7 @@ const UserRegistrationForm = () => {
           {...register('name')}
           error={errors?.name?.message}
           fullWidth
-          size="xl"
+          size="md"
           required
           style={{ marginBottom: '1rem' }}
           onClick={() => handleInputClick('name')}
@@ -188,7 +188,7 @@ const UserRegistrationForm = () => {
           value={gender}
           onChange={handleGenderValue}
           name="gender"
-          size="xl"
+          size="md"
           data={[
             { label: t('male'), value: GENDER.MALE },
             { label: t('female'), value: GENDER.FEMALE },
@@ -206,7 +206,7 @@ const UserRegistrationForm = () => {
           placeholder="January 12,1980"
           name="dob"
           fullWidth
-          size="xl"
+          size="md"
           maxDate={new Date()}
           style={{ marginBottom: '1rem' }}
         />
@@ -217,7 +217,7 @@ const UserRegistrationForm = () => {
           {...register('phoneNumber')}
           error={errors?.phoneNumber?.message}
           fullWidth
-          size="xl"
+          size="md"
           style={{ marginBottom: '1rem' }}
           value={keyboardInput}
           onChange={onInputChange}

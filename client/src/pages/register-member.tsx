@@ -8,20 +8,9 @@ export default function UserDetails() {
     <>
       <Header />
       <div className={styles.contents}>
-        {/* <div style={{ position: 'fixed', top: '5%', left: '5%' }}> */}
-        {/* <div
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-end', // Align to the right
-          alignItems: 'center', // Center vertically
-          padding: '10px', // Optional: add some padding
-        }}
-      > */}
-        {/* <HomeButton /> */}
-        {/* </div> */}
-        <div className={styles.imageContainer2}>
+        {/* <div className={styles.imageContainer2} style={{ height: 200, width: 300 }}>
           <img src="/images/detailspage.png" alt="object" className={styles.image2} />
-        </div>
+        </div> */}
         <div className={styles.userdetailsheading}>Enter Your Details</div>
         <UserRegistrationForm />
       </div>

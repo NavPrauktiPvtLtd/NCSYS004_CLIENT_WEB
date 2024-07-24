@@ -1,15 +1,16 @@
 import HomeButton from './HomeButton';
+import styles from '../../styles/Details.module.css';
 
 const Header = () => {
   return (
-    <div style={{ width: '100%', height: 120, backgroundColor: 'white' }}>
+    <div style={{ width: '100%', height: 70 }} className={styles.header}>
       <div
         style={{
           display: 'flex',
           justifyContent: 'start',
-          alignItems: 'center',
+          alignItems: 'end',
           height: '100%',
-          marginLeft: 40,
+          marginLeft: 35,
         }}
       >
         <HomeButton />

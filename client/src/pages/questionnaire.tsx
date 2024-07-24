@@ -102,21 +102,6 @@ export default function Questionnaire() {
     <>
       <Header />
       <div className={styles.contents}>
-        {/* <div style={{ position: 'fixed', top: '5%', left: '5%' }}> */}
-        {/* <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-        }}
-      > */}
-        {/* <HomeButton /> */}
-        {/* </div> */}
-        {/* <div className="absolute top-4 left-4 w-full">
-        <HomeButton />
-      </div> */}
-
         {loading ? (
           <div className=" flex items-center gap-1">
             <p

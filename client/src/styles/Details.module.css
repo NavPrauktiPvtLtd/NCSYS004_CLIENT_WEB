@@ -1,9 +1,13 @@
+.header {
+  background-color: var(--background-color);
+}
+
 .contents {
-  padding: 2rem;
+  padding: 1rem;
   background-color: var(--background-color);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   min-height: 100vh;
   user-select: none;
@@ -31,23 +35,22 @@
 }
 
 .button {
-  min-width: 200px;
+  min-width: 180px;
   cursor: pointer;
   text-align: center;
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 1rem;
   border: 1px solid var(--button-color);
   background: var(--button-color);
   color: var(--background-color);
   transition-duration: 0.4s;
   -webkit-transition-duration: 0.4s;
-  font-size: 2rem;
+  font-size: 1.5rem;
   text-transform: uppercase;
 }
 
 .userdetailsheading {
-  font-size: 3rem;
-  margin-top: 20px;
+  font-size: 2rem;
   text-align: center;
   color: rgb(131 24 67);
   font-family: Montserrat;
