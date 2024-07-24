@@ -45,6 +45,7 @@ export default function Home() {
   }, [kioskSerialID]);
 
   const handleButton = () => {
+    playClickSound();
     navigate(PageRoutes.AUTH_USER_REGISTER_MEMEBER);
   };
 
