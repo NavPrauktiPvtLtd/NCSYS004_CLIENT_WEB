@@ -6,7 +6,7 @@ export const userDetailsFormSchema = z.object({
     .string()
     .min(3, { message: 'Name must be at least 3 characters long' })
     .max(50, { message: 'Name can not exceed 50 characters' }),
-  dob: z.string(),
+  // dob: z.string(),
   gender: z.enum([GENDER.MALE, GENDER.FEMALE, GENDER.OTHERS]),
   phoneNumber: z
     .string()

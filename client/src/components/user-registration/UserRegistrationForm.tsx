@@ -19,7 +19,7 @@ import { useKioskSerialNumberStore } from '@/store/store';
 import { useTestSessionStore } from '@/store/store';
 import { toast, Toaster } from 'react-hot-toast';
 import { debounce } from '../common/Debouncing';
-import DateSelector from './DateSelector';
+// import DateSelector from './DateSelector';
 
 const departments = [
   'Paediatrics',
@@ -72,15 +72,15 @@ const UserRegistrationForm = () => {
       toast.error('Please select your gender!');
       return;
     }
-    if (!dob) {
-      toast.error('Please add your Date of Birth!');
-      return;
-    }
+    // if (!dob) {
+    //   toast.error('Please add your Date of Birth!');
+    //   return;
+    // }
     playClickSound();
 
     const formattedData = {
       ...data,
-      dob: new Date(data.dob),
+      dob: new Date('2000-01-01'),
       gender,
     };
 
@@ -118,11 +118,11 @@ const UserRegistrationForm = () => {
     }
   }, [gender, setValue]);
 
-  useEffect(() => {
-    if (dob) {
-      setValue('dob', dob);
-    }
-  }, [dob, setValue]);
+  // useEffect(() => {
+  //   if (dob) {
+  //     setValue('dob', dob);
+  //   }
+  // }, [dob, setValue]);
 
   const handleShift = () => {
     const newLayoutName = layoutName === 'default' ? 'shift' : 'default';
@@ -225,13 +225,13 @@ const UserRegistrationForm = () => {
             </div>
           </div>
 
-          <div className={styles.parentContainer}>
+          {/* <div className={styles.parentContainer}>
             <label className={styles.genderDateLabel}>
               {t('dob')}
               <span style={{ color: 'red', fontWeight: 'normal' }}>*</span>
             </label>
             <DateSelector onDateChange={(value: string) => setDob(value)} />
-          </div>
+          </div> */}
 
           <div className={styles.parentContainer}>
             <label className={styles.genderDateLabel}>
@@ -247,7 +247,7 @@ const UserRegistrationForm = () => {
                 setValue('department', val as string);
                 playClickSound();
               }}
-              style={{ width: '400px' }}
+              style={{ width: '500px' }}
               maxDropdownHeight={450}
             />
           </div>
