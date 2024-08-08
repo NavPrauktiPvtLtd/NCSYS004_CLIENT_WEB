@@ -1,6 +1,6 @@
 import styles from '../styles/Details.module.css';
 import 'react-simple-keyboard/build/css/index.css';
-import { Button, Group, SegmentedControl } from '@mantine/core';
+import { Button, Group } from '@mantine/core';
 import { PageRoutes, QuestionnaireAnswers, Questions, QuestionType } from '../../@types/index.';
 import useClickSound from '@/hooks/useClickSound';
 import ServerAPI from '../../API/ServerAPI';
@@ -12,11 +12,17 @@ import { useKioskSerialNumberStore } from '@/store/store';
 import { useTestSessionStore } from '@/store/store';
 import { toast, Toaster } from 'react-hot-toast';
 import Header from '@/components/common/Header';
+import RadioGroupRating from '@/components/common/Ratings';
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+
+const QUESTIONS_PER_PAGE = 3;
 
 export default function Questionnaire() {
   const navigate = useNavigate();
 
   const [questionList, setQuestionList] = useState<Questions[]>([]);
+
+  const [currentPage, setCurrentPage] = useState(0);
 
   const { playClickSound } = useClickSound();
 
@@ -48,11 +54,11 @@ export default function Questionnaire() {
           setQuestionList(questions);
 
           // Initialize answerObj with default value of 1 for each question
-          const defaultAnswers = questions.reduce((acc: { [key: string]: string }, question: Questions) => {
-            acc[question.id] = '1';
-            return acc;
-          }, {});
-          setAnswerObj(defaultAnswers);
+          // const defaultAnswers = questions.reduce((acc: { [key: string]: string }, question: Questions) => {
+          //   acc[question.id] = '1';
+          //   return acc;
+          // }, {});
+          // setAnswerObj(defaultAnswers);
 
           setLoading(false);
         } catch (error) {
@@ -83,6 +89,26 @@ export default function Questionnaire() {
       }));
       console.log({ answersList });
       try {
+        // Validate if all questions have been answered
+        const unansweredQuestions = questionList
+          .map((question, index) => ({
+            index: index + 1,
+            questionId: question.id,
+          }))
+          .filter(question => !answerObj[question.questionId]);
+
+        const length = unansweredQuestions.length;
+
+        if (length > 0) {
+          const unansweredQuestionNumbers = unansweredQuestions.map(question => question.index).join(', ');
+          toast.error(
+            `${length > 1 ? 'Questions' : 'Question'} ${unansweredQuestionNumbers} ${
+              length > 1 ? 'are' : 'is'
+            } not answered`
+          );
+          return;
+        }
+
         await ServerAPI.postQuestionnaireAnswers(answersList, kioskSerialID);
         await getSessionId();
         navigate(PageRoutes.AUTH_USER_REGISTRATION_COMPLETE);
@@ -98,8 +124,26 @@ export default function Questionnaire() {
     });
   };
 
+  const handleNextPage = () => {
+    playClickSound();
+    if ((currentPage + 1) * QUESTIONS_PER_PAGE < questionList.length) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    playClickSound();
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const startIdx = currentPage * QUESTIONS_PER_PAGE;
+  const endIdx = startIdx + QUESTIONS_PER_PAGE;
+  const currentQuestions = questionList.slice(startIdx, endIdx);
+
   return (
-    <>
+    <div style={{ height: '100%' }}>
       <Header />
       <div className={styles.contents}>
         {loading ? (
@@ -117,46 +161,124 @@ export default function Questionnaire() {
           </div>
         ) : (
           <>
-            <h1
+            <div
               style={{
-                fontSize: '3rem',
-                textTransform: 'uppercase',
+                fontSize: '2.5rem',
                 color: 'rgb(232, 80, 91)',
-                fontFamily: 'Montserrat',
+                fontFamily: 'cursive',
+                fontWeight: 500,
+                marginBottom: 25,
+                height: 70,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               Please select the answers below
-            </h1>
-            <form onSubmit={onSubmit}>
-              {questionList.map(data => (
-                <div key={data.id}>
-                  <h2 className={styles.userdetailsheading}>{data.question_text_primary}</h2>
-                  <SegmentedControl
-                    style={{ marginTop: '1rem' }}
-                    fullWidth
-                    size="xl"
-                    color="red"
-                    value={answerObj[data.id]}
-                    withScrollArea={false}
-                    styles={{ dropdown: { maxHeight: 200, overflowY: 'auto' } }}
-                    data={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
-                    onChange={(val: string) => {
-                      playClickSound();
-                      handleRatingChange(data.id, val);
+            </div>
+            <form
+              onSubmit={onSubmit}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'column',
+              }}
+            >
+              <div
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'start',
+                  flexDirection: 'column',
+                  height: 520,
+                }}
+              >
+                {currentQuestions.map((data, index) => (
+                  <div
+                    key={data.id}
+                    style={{
+                      width: '85%',
+                      display: 'flex',
+                      alignItems: 'start',
+                      justifyContent: 'center',
+                      flexDirection: 'column',
                     }}
-                  />
+                  >
+                    <h2 className={styles.userQuestionHeading}>
+                      <span style={{ color: 'rgb(100, 50, 50)', marginRight: 10 }}>{startIdx + index + 1 + '.'}</span>
+                      {data.question_text_primary}
+                    </h2>
+                    <RadioGroupRating
+                      value={answerObj[data.id]}
+                      onChange={(val: string) => {
+                        playClickSound();
+                        handleRatingChange(data.id, val);
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <Group
+                position="center"
+                style={{
+                  marginTop: '2rem',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'end',
+                  width: '85%',
+                }}
+              >
+                <div style={{ display: 'flex', width: '30%' }} />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '35%' }}>
+                  {endIdx >= questionList.length && (
+                    <Button size="xl" uppercase type="submit" color="red" radius="md">
+                      Submit
+                    </Button>
+                  )}
                 </div>
-              ))}
-              <Group position="center" style={{ marginTop: '2rem' }}>
-                <Button size="xl" uppercase type="submit" color="red" radius="md">
-                  Submit
-                </Button>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'end', gap: '20px', width: '30%' }}
+                >
+                  <Button
+                    size="md"
+                    onClick={handlePreviousPage}
+                    color="red"
+                    radius="md"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px',
+                    }}
+                    disabled={currentPage <= 0}
+                  >
+                    <FaAngleLeft /> Prev
+                  </Button>
+                  <Button
+                    size="md"
+                    onClick={handleNextPage}
+                    color="red"
+                    radius="md"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px',
+                    }}
+                    disabled={endIdx >= questionList.length}
+                  >
+                    Next <FaAngleRight />
+                  </Button>
+                </div>
               </Group>
             </form>
           </>
         )}
         <Toaster />
       </div>
-    </>
+    </div>
   );
 }

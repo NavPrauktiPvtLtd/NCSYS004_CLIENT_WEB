@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import styles from '../../styles/Details.module.css';
-import { TextInput, Group, SegmentedControl } from '@mantine/core';
+import { TextInput, Group, Select } from '@mantine/core';
 import { FaChevronRight } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ServerAPI from '../../../API/ServerAPI';
 import { GENDER } from '../../../@types/index.';
 import { UserFormData, userDetailsFormSchema } from '../../../validation';
-import { DateInput } from '@mantine/dates';
 import useClickSound from '@/hooks/useClickSound';
 import { PageRoutes } from '../../../@types/index.';
 import { useMemberDataStore } from '@/store/store';
@@ -19,32 +18,35 @@ import { useTranslation } from 'react-i18next';
 import { useKioskSerialNumberStore } from '@/store/store';
 import { useTestSessionStore } from '@/store/store';
 import { toast, Toaster } from 'react-hot-toast';
+import { debounce } from '../common/Debouncing';
+import DateSelector from './DateSelector';
+
+const departments = [
+  'Paediatrics',
+  'Surgery',
+  'ENT',
+  'Eye',
+  'Pathology',
+  'Radiology',
+  'Anaesthesia, Dental',
+  'Medicine',
+  'Homeopathic',
+  'Psychiatry',
+  'Emergency',
+];
 
 const UserRegistrationForm = () => {
-  const [gender, setGender] = useState<GENDER>(GENDER.MALE);
-
-  const [dob, setDob] = useState(new Date('01/01/2020'));
-
-  const navigate = useNavigate();
-
-  const { playClickSound } = useClickSound();
-
-  const [keyboardVisibility, setKeyboardVisibility] = useState(false);
-
+  const [gender, setGender] = useState<GENDER | null>(null);
+  const [dob, setDob] = useState('');
+  const [department, setDepartment] = useState('');
+  const [keyboardVisibility, setKeyboardVisibility] = useState(true);
   const [keyboardNumberVisibility, setKeyboardNumberVisibility] = useState(false);
-
-  const [keyboardInput, setKeyboardInput] = useState('');
-
-  const [inputField, setInputField] = useState<string | null>(null);
-
+  const [keyboardNumberInput, setKeyboardNumberInput] = useState('');
+  const [inputField, setInputField] = useState<'name' | 'phoneNumber'>('name');
   const [layoutName, setLayoutName] = useState('default');
-
   const { t } = useTranslation();
-
   const { kioskSerialID } = useKioskSerialNumberStore();
-
   const { setSessionId } = useTestSessionStore();
-
   const {
     register,
     setValue,
@@ -52,6 +54,9 @@ const UserRegistrationForm = () => {
     reset,
     formState: { errors },
   } = useForm<UserFormData>({ resolver: zodResolver(userDetailsFormSchema) });
+  const { setMemberData, memberData } = useMemberDataStore();
+  const navigate = useNavigate();
+  const { playClickSound } = useClickSound();
 
   useEffect(() => {
     console.log(errors);
@@ -62,14 +67,29 @@ const UserRegistrationForm = () => {
     setGender(value as GENDER);
   };
 
-  const { setMemberData, memberData } = useMemberDataStore();
-
-  const onSubmit = async (data: unknown) => {
+  const onSubmit = async (data: UserFormData) => {
+    if (!gender) {
+      toast.error('Please select your gender!');
+      return;
+    }
+    if (!dob) {
+      toast.error('Please add your Date of Birth!');
+      return;
+    }
     playClickSound();
+
+    const formattedData = {
+      ...data,
+      dob: new Date(data.dob),
+      gender,
+    };
+
+    console.log(formattedData);
+
     try {
-      const result = await ServerAPI.createUser(data);
-      setGender(GENDER.MALE);
-      setDob(dob);
+      const result = await ServerAPI.createUser(formattedData);
+      setGender(null);
+      setDob('');
       setMemberData(result.data.user);
       navigate(PageRoutes.AUTH_USER_QUESTIONNAIRE);
       reset();
@@ -81,13 +101,11 @@ const UserRegistrationForm = () => {
 
   const setSessionIdFn = async () => {
     if (!memberData) return;
-    else {
-      const sessionData = await ServerAPI.startTestSession({
-        userId: memberData.id,
-        kioskId: kioskSerialID,
-      });
-      setSessionId(sessionData.id);
-    }
+    const sessionData = await ServerAPI.startTestSession({
+      userId: memberData.id,
+      kioskId: kioskSerialID,
+    });
+    setSessionId(sessionData.id);
   };
 
   useEffect(() => {
@@ -95,11 +113,15 @@ const UserRegistrationForm = () => {
   }, [memberData?.id]);
 
   useEffect(() => {
-    setValue('gender', gender);
+    if (gender) {
+      setValue('gender', gender);
+    }
   }, [gender, setValue]);
 
   useEffect(() => {
-    setValue('dob', dob);
+    if (dob) {
+      setValue('dob', dob);
+    }
   }, [dob, setValue]);
 
   const handleShift = () => {
@@ -110,19 +132,19 @@ const UserRegistrationForm = () => {
   const onKeyPress = (button: string) => {
     playClickSound();
     if (button === '{shift}' || button === '{lock}') handleShift();
-    if (button === '{enter}') {
-      setKeyboardVisibility(false);
+  };
+
+  const handleInputClick = (fieldName: 'name' | 'phoneNumber') => {
+    if (fieldName === 'name') {
+      setKeyboardNumberVisibility(false);
+      setKeyboardVisibility(true);
+      setInputField(fieldName);
     }
-  };
-
-  const handleInputClick = (fieldName: string) => {
-    setInputField(fieldName);
-    setKeyboardNumberVisibility(false);
-    setKeyboardVisibility(true);
-  };
-
-  const handleKeyboardChange = (input: string | Date) => {
-    setValue(inputField as 'gender' | 'dob' | 'name', input);
+    if (fieldName === 'phoneNumber') {
+      setKeyboardNumberVisibility(true);
+      setKeyboardVisibility(false);
+      setInputField(fieldName);
+    }
   };
 
   const customDisplay = {
@@ -130,98 +152,117 @@ const UserRegistrationForm = () => {
     '{space}': 'space ',
     '{tab}': 'tab',
     '{enter}': 'enter',
-    '{shift}': 'shift',
-    '{lock}': 'caps',
-  };
-
-  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setKeyboardInput(newValue);
-    setValue('phoneNumber', newValue);
-  };
-
-  const handleNumberInputClick = () => {
-    setKeyboardVisibility(false);
-    setKeyboardNumberVisibility(true);
+    '{shift}': 'caps',
+    '{default}': 'caps',
   };
 
   const onNumberKeyPress = (button: string) => {
     playClickSound();
-    if (button === '{enter}') {
-      setKeyboardNumberVisibility(false);
-    }
     if (button === '{bksp}') {
-      const updatedValue = keyboardInput.slice(0, -1);
-      setKeyboardInput(updatedValue);
+      const updatedValue = keyboardNumberInput.slice(0, -1);
+      setKeyboardNumberInput(updatedValue);
       setValue('phoneNumber', updatedValue);
-    } else if (button === '{enter}') {
-      setKeyboardNumberVisibility(false);
     } else {
-      const newValue = keyboardInput + button;
-      setKeyboardInput(newValue);
+      const newValue = keyboardNumberInput + button;
+      setKeyboardNumberInput(newValue);
       setValue('phoneNumber', newValue);
     }
   };
 
+  const debouncedOnKeyPress = debounce(onKeyPress, 300);
+  const debouncedOnNumberKeyPress = debounce(onNumberKeyPress, 300);
+
+  console.log(dob);
+
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)} style={{ width: '80vw' }}>
+    <div className={styles.form}>
+      <form onSubmit={handleSubmit(onSubmit)} style={{ width: '80vw', height: '100%' }}>
         <TextInput
           withAsterisk
           autoComplete="off"
-          label={t('name')}
+          label={t('Name of the Patient')}
           {...register('name')}
           error={errors?.name?.message}
-          fullWidth
           size="md"
           required
-          style={{ marginBottom: '1rem' }}
+          style={{ marginBottom: '1rem', width: '100%' }}
           onClick={() => handleInputClick('name')}
         />
 
-        <SegmentedControl
-          label={t('gender')}
-          style={{ marginBottom: '1rem' }}
-          color="red"
-          transitionDuration={700}
-          fullWidth
-          value={gender}
-          onChange={handleGenderValue}
-          name="gender"
-          size="md"
-          data={[
-            { label: t('male'), value: GENDER.MALE },
-            { label: t('female'), value: GENDER.FEMALE },
-            { label: t('others'), value: GENDER.OTHERS },
-          ]}
-        />
-        <DateInput
-          value={dob}
-          onChange={(value: Date) => {
-            if (value) {
-              setDob(value);
-            }
-          }}
-          label={t('dob')}
-          placeholder="January 12,1980"
-          name="dob"
-          fullWidth
-          size="md"
-          maxDate={new Date()}
-          style={{ marginBottom: '1rem' }}
-        />
+        <div className={styles.genderDateContainer}>
+          <div className={styles.parentContainer}>
+            <label className={styles.genderDateLabel}>
+              {t('gender')}
+              <span style={{ color: 'red', fontWeight: 'normal' }}>*</span>
+            </label>
+            <div className={styles.genderOptions}>
+              <input
+                type="checkbox"
+                id="male"
+                value={GENDER.MALE}
+                checked={gender === GENDER.MALE}
+                onChange={() => handleGenderValue(GENDER.MALE)}
+              />
+              <label htmlFor="male">{t('male')}</label>
+
+              <input
+                type="checkbox"
+                id="female"
+                value={GENDER.FEMALE}
+                checked={gender === GENDER.FEMALE}
+                onChange={() => handleGenderValue(GENDER.FEMALE)}
+              />
+              <label htmlFor="female">{t('female')}</label>
+
+              <input
+                type="checkbox"
+                id="others"
+                value={GENDER.OTHERS}
+                checked={gender === GENDER.OTHERS}
+                onChange={() => handleGenderValue(GENDER.OTHERS)}
+              />
+              <label htmlFor="others">{t('others')}</label>
+            </div>
+          </div>
+
+          <div className={styles.parentContainer}>
+            <label className={styles.genderDateLabel}>
+              {t('dob')}
+              <span style={{ color: 'red', fontWeight: 'normal' }}>*</span>
+            </label>
+            <DateSelector onDateChange={(value: string) => setDob(value)} />
+          </div>
+
+          <div className={styles.parentContainer}>
+            <label className={styles.genderDateLabel}>
+              {t('Admitted Department')}
+              <span style={{ color: 'red', fontWeight: 'normal' }}>*</span>
+            </label>
+            <Select
+              data={departments}
+              placeholder="Select the department"
+              value={department}
+              onChange={val => {
+                setDepartment(val as string);
+                setValue('department', val as string);
+                playClickSound();
+              }}
+              style={{ width: '400px' }}
+              maxDropdownHeight={450}
+            />
+          </div>
+        </div>
+
         <TextInput
           withAsterisk
           autoComplete="off"
           label={t('phone')}
           {...register('phoneNumber')}
           error={errors?.phoneNumber?.message}
-          fullWidth
           size="md"
-          style={{ marginBottom: '1rem' }}
-          value={keyboardInput}
-          onChange={onInputChange}
-          onClick={handleNumberInputClick}
+          style={{ marginBottom: '1rem', width: '100%' }}
+          onClick={() => handleInputClick('phoneNumber')}
+          maxLength={10}
         />
         <Group position="center" mt="md">
           <button type="submit" className={styles.button}>
@@ -234,10 +275,11 @@ const UserRegistrationForm = () => {
         {keyboardNumberVisibility && (
           <div className={styles.keyboardContainer} style={{ marginTop: '1rem' }}>
             <Keyboard
-              onChange={input => setKeyboardInput(input)}
-              onKeyPress={onNumberKeyPress}
+              inputName={inputField}
+              onChange={input => setKeyboardNumberInput(input)}
+              onKeyPress={debouncedOnNumberKeyPress}
               layout={{
-                default: ['1 2 3', '4 5 6', '7 8 9', '0', '{bksp} {enter}'],
+                default: ['1 2 3', '4 5 6', '7 8 9', '{bksp} 0 {enter}'],
               }}
               theme={'hg-theme-default hg-layout-default myTheme'}
               buttonTheme={[
@@ -249,35 +291,27 @@ const UserRegistrationForm = () => {
             />
           </div>
         )}
-        {keyboardVisibility && inputField && (
-          <div style={{ marginTop: '1rem' }}>
+        {keyboardVisibility && (
+          <div style={{ marginTop: '1rem' }} className={styles.keyboardContainer}>
             <Keyboard
               inputName={inputField}
-              onChange={handleKeyboardChange}
-              onKeyPress={onKeyPress}
+              onChange={input => setValue('name', input)}
+              onKeyPress={debouncedOnKeyPress}
               display={customDisplay}
               theme={'hg-theme-default hg-layout-default myTheme'}
               layoutName={layoutName}
+              layout={{
+                default: ['q w e r t y u i o p', 'a s d f g h j k l', '{shift} z x c v b n m {bksp}', '{space}'],
+                shift: ['Q W E R T Y U I O P', 'A S D F G H J K L', '{shift} Z X C V B N M {bksp}', '{space}'],
+              }}
               buttonTheme={[
                 {
                   class: 'hg-red',
                   buttons:
-                    "1 2 3 4 5 6 7 8 9 0 {shift} {enter} {bksp} {tab} {space} {lock} .com Q W E R T Y U I O P Q W E R T Y U I O P A S D F G H J K L Z X C V B N M q w e r t y u i o p a s d f g h j k l z x c v b n m . - .COM @ $ ( ) ! # % & ' * + / = ? ^ ` { | } ~ [ ] ; , \\ _ : < > ",
-                },
-                // {
-                //   class: "hg-red",
-                //   buttons: selectedLanguage
-                //     ? keyboardLayouts[selectedLanguage][layoutName]
-                //     : "",
-                // },
-
-                {
-                  class: 'my-double-quote-button',
-                  buttons: '"',
+                    'q w e r t y u i o p a s d f g h j k l {shift} z x c v b n m {bksp} {space} Q W E R T Y U I O P A S D F G H J K L Z X C V B N M',
                 },
               ]}
             />
-            {/* )} */}
           </div>
         )}
       </form>

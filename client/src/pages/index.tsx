@@ -1,10 +1,10 @@
 import styles from '../styles/Homepage.module.css';
 import useClickSound from '@/hooks/useClickSound';
 import { PageRoutes } from '../../@types/index.';
-import { useLanguageStore } from '@/store/store';
+// import { useLanguageStore } from '@/store/store';
 import { useNavigate } from 'react-router-dom';
 import HomePageSvg from '@/components/common/svg/HomePageSvg';
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import ServerAPI from 'API/ServerAPI';
 import { useKioskSerialNumberStore } from '@/store/store';
@@ -14,9 +14,9 @@ export default function Home() {
 
   const { playClickSound } = useClickSound();
 
-  const { setLanguage } = useLanguageStore();
+  // const { setLanguage } = useLanguageStore();
 
-  const { i18n } = useTranslation();
+  // const { i18n } = useTranslation();
 
   const { setKioskId, kioskSerialID } = useKioskSerialNumberStore();
 
@@ -52,7 +52,13 @@ export default function Home() {
   return (
     <>
       <div className={styles.contents}>
-        <div className={styles.imageContainer2} style={{ width: '700px', height: '500px' }}>
+        <div className="">
+          <div className={styles.feedback} style={{ color: 'rgb(232, 80, 91)' }}>
+            {' '}
+            Give Us Your Valuable Feedback Here
+          </div>
+        </div>
+        <div className={styles.imageContainer2} style={{ width: '525px', height: '375px' }}>
           <HomePageSvg />
         </div>
         <div className={styles.welcome} style={{ color: 'rgb(232, 80, 91)' }}>

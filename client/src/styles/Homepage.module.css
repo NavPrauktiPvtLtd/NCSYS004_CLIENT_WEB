@@ -1,6 +1,6 @@
 .contents {
   padding: 2rem;
-  min-height: 100vh;
+  height: 100vh;
   background-color: var(--background-color);
   display: flex;
   flex-direction: column;
@@ -10,7 +10,7 @@
 }
 
 .imagecontainer {
-  width: 400px;
+  width: 300px;
   height: auto;
 }
 
@@ -32,8 +32,15 @@
 .welcome {
   color: var(--primary-color);
   letter-spacing: 0.1rem;
-  font-size: 5rem;
-  font-family: "Dancing Script";
+  font-size: 3.5rem;
+  font-family: 'Dancing Script';
+}
+
+.feedback {
+  color: var(--primary-color);
+  letter-spacing: 0.05rem;
+  font-size: 2.5rem;
+  font-family: cursive;
 }
 
 .buttons {
@@ -48,16 +55,16 @@
   padding: 10px;
   cursor: pointer;
   background-color: var(--button-color);
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   color: var(--background-color);
   text-transform: uppercase;
   text-align: center;
-  padding: 2rem;
+  padding: 1.6rem;
   border-radius: 1rem;
   border: 1px solid var(--button-color);
   transition-duration: 0.4s;
   -webkit-transition-duration: 0.4s;
-  font-size: 2rem;
+  font-size: 1.6rem;
 }
 
 .button:hover {
@@ -149,7 +156,7 @@
 }
 
 .buttonretaketest:after {
-  content: "";
+  content: '';
   display: block;
   position: absolute;
   border-radius: 4em;
