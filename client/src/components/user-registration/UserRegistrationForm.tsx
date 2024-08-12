@@ -18,7 +18,6 @@ import { useTranslation } from 'react-i18next';
 import { useKioskSerialNumberStore } from '@/store/store';
 import { useTestSessionStore } from '@/store/store';
 import { toast, Toaster } from 'react-hot-toast';
-import { debounce } from '../common/Debouncing';
 // import DateSelector from './DateSelector';
 
 const departments = [
@@ -37,7 +36,6 @@ const departments = [
 
 const UserRegistrationForm = () => {
   const [gender, setGender] = useState<GENDER | null>(null);
-  const [dob, setDob] = useState('');
   const [department, setDepartment] = useState('');
   const [keyboardVisibility, setKeyboardVisibility] = useState(true);
   const [keyboardNumberVisibility, setKeyboardNumberVisibility] = useState(false);
@@ -89,7 +87,6 @@ const UserRegistrationForm = () => {
     try {
       const result = await ServerAPI.createUser(formattedData);
       setGender(null);
-      setDob('');
       setMemberData(result.data.user);
       navigate(PageRoutes.AUTH_USER_QUESTIONNAIRE);
       reset();
@@ -168,11 +165,6 @@ const UserRegistrationForm = () => {
       setValue('phoneNumber', newValue);
     }
   };
-
-  const debouncedOnKeyPress = debounce(onKeyPress, 300);
-  const debouncedOnNumberKeyPress = debounce(onNumberKeyPress, 300);
-
-  console.log(dob);
 
   return (
     <div className={styles.form}>
@@ -277,7 +269,7 @@ const UserRegistrationForm = () => {
             <Keyboard
               inputName={inputField}
               onChange={input => setKeyboardNumberInput(input)}
-              onKeyPress={debouncedOnNumberKeyPress}
+              onKeyPress={onNumberKeyPress}
               layout={{
                 default: ['1 2 3', '4 5 6', '7 8 9', '{bksp} 0 {enter}'],
               }}
@@ -296,7 +288,7 @@ const UserRegistrationForm = () => {
             <Keyboard
               inputName={inputField}
               onChange={input => setValue('name', input)}
-              onKeyPress={debouncedOnKeyPress}
+              onKeyPress={onKeyPress}
               display={customDisplay}
               theme={'hg-theme-default hg-layout-default myTheme'}
               layoutName={layoutName}
