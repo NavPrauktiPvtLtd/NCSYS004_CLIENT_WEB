@@ -4,12 +4,16 @@ import styles from '../styles/Details.module.css';
 import { useEffect } from 'react';
 import { PageRoutes } from '../../@types/index.';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/store/store';
 
 const RegistrationComplete = () => {
   const navigate = useNavigate();
 
+  const { setSelectedArea } = useAuthStore();
+
   useEffect(() => {
     const redirectTimer = setTimeout(() => {
+      setSelectedArea(undefined);
       navigate(PageRoutes.HOME);
     }, 8000);
 

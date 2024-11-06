@@ -1,7 +1,11 @@
 import HomeButton from './HomeButton';
 import styles from '../../styles/Details.module.css';
 
-const Header = () => {
+type Props = {
+  setSelectedArea: (area: 'OPD' | 'IPD' | undefined) => void;
+};
+
+const Header = ({ setSelectedArea }: Props) => {
   return (
     <div style={{ width: '100%', height: 70 }} className={styles.header}>
       <div
@@ -13,7 +17,7 @@ const Header = () => {
           marginLeft: 35,
         }}
       >
-        <HomeButton />
+        <HomeButton setSelectedArea={setSelectedArea} />
       </div>
     </div>
   );

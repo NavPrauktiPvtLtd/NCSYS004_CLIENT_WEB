@@ -1,16 +1,21 @@
-import { PageRoutes } from "../../../@types/index.";
-import { useNavigate } from "react-router-dom";
-import useClickSound from "@/hooks/useClickSound";
-import { Tooltip } from "@mantine/core";
-import { FaHome } from "react-icons/fa";
+import { PageRoutes } from '../../../@types/index.';
+import { useNavigate } from 'react-router-dom';
+import useClickSound from '@/hooks/useClickSound';
+import { Tooltip } from '@mantine/core';
+import { FaHome } from 'react-icons/fa';
 
-const HomeButton = () => {
+type Props = {
+  setSelectedArea: (area: 'OPD' | 'IPD' | undefined) => void;
+};
+
+const HomeButton = ({ setSelectedArea }: Props) => {
   const navigate = useNavigate();
 
   const { playClickSound } = useClickSound();
 
   const navigateToHome = () => {
     playClickSound();
+    setSelectedArea(undefined);
     navigate(PageRoutes.HOME);
   };
 
@@ -19,18 +24,18 @@ const HomeButton = () => {
       <Tooltip label="Home">
         <button
           style={{
-            fontSize: "2rem",
-            cursor: "pointer",
-            border: "none",
-            background: "transparent",
+            fontSize: '2rem',
+            cursor: 'pointer',
+            border: 'none',
+            background: 'transparent',
           }}
           onClick={navigateToHome}
         >
           <FaHome
             style={{
-              color: "rgb(232, 80, 91)",
-              cursor: "pointer",
-              width: "60px",
+              color: 'rgb(232, 80, 91)',
+              cursor: 'pointer',
+              width: '60px',
             }}
           />
         </button>

@@ -5,7 +5,7 @@ import { PageRoutes, QuestionnaireAnswers, Questions, QuestionType } from '../..
 import useClickSound from '@/hooks/useClickSound';
 import ServerAPI from '../../API/ServerAPI';
 import { useState, useEffect, FormEvent } from 'react';
-import { useMemberDataStore } from '@/store/store';
+import { useAuthStore, useMemberDataStore } from '@/store/store';
 import { useNavigate } from 'react-router-dom';
 // import HomeButton from '@/components/common/HomeButton';
 import { useKioskSerialNumberStore } from '@/store/store';
@@ -19,6 +19,8 @@ const QUESTIONS_PER_PAGE = 3;
 
 export default function Questionnaire() {
   const navigate = useNavigate();
+
+  const { setSelectedArea } = useAuthStore();
 
   const [questionList, setQuestionList] = useState<Questions[]>([]);
 
@@ -36,6 +38,8 @@ export default function Questionnaire() {
 
   const { sessionID } = useTestSessionStore();
 
+  const { selectedArea } = useAuthStore();
+
   // useEffect(() => {
   //   console.log({ answerObj });
   // }, [answerObj]);
@@ -48,19 +52,23 @@ export default function Questionnaire() {
     } else {
       const getQuestions = async () => {
         try {
-          const {
-            data: { questions },
-          } = await ServerAPI.getQuestionList(kioskSerialID);
-          setQuestionList(questions);
+          console.log({ selectedArea });
+          console.log({ kioskSerialID });
+          if (selectedArea) {
+            const {
+              data: { questions },
+            } = await ServerAPI.getQuestionList(kioskSerialID, selectedArea);
+            setQuestionList(questions);
 
-          // Initialize answerObj with default value of 1 for each question
-          // const defaultAnswers = questions.reduce((acc: { [key: string]: string }, question: Questions) => {
-          //   acc[question.id] = '1';
-          //   return acc;
-          // }, {});
-          // setAnswerObj(defaultAnswers);
+            // Initialize answerObj with default value of 1 for each question
+            // const defaultAnswers = questions.reduce((acc: { [key: string]: string }, question: Questions) => {
+            //   acc[question.id] = '1';
+            //   return acc;
+            // }, {});
+            // setAnswerObj(defaultAnswers);
 
-          setLoading(false);
+            setLoading(false);
+          }
         } catch (error) {
           console.log(error);
         }
@@ -144,7 +152,7 @@ export default function Questionnaire() {
 
   return (
     <div style={{ height: '100%' }}>
-      <Header />
+      <Header setSelectedArea={setSelectedArea} />
       <div className={styles.contents}>
         {loading ? (
           <div className=" flex items-center gap-1">

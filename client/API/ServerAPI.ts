@@ -25,8 +25,10 @@ class ServerAPI {
     return ServerAxiosInstance.post<{ user: User }>('/user/create-new', data);
   };
 
-  static getQuestionList = async (kioskSerialID: string | null) => {
-    return ServerAxiosInstance.get<{ questions: Questions[] }>(`/user/question-list?kioskId=${kioskSerialID}`);
+  static getQuestionList = async (kioskSerialID: string | null, cat: 'IPD' | 'OPD') => {
+    return ServerAxiosInstance.get<{ questions: Questions[] }>(
+      `/user/question-list?kioskId=${kioskSerialID}&cat=${cat}`
+    );
   };
 
   static postQuestionnaireAnswers = async (data: QuestionnaireAnswers[], kioskSerialID: string | null) => {
