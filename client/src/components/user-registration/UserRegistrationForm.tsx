@@ -145,7 +145,7 @@ const UserRegistrationForm = () => {
   };
 
   const customDisplay = {
-    '{bksp}': 'bksp',
+    '{bksp}': '⌫ Remove',
     '{space}': 'space ',
     '{tab}': 'tab',
     '{enter}': 'enter',
@@ -270,14 +270,15 @@ const UserRegistrationForm = () => {
               inputName={inputField}
               onChange={input => setKeyboardNumberInput(input)}
               onKeyPress={onNumberKeyPress}
+              display={customDisplay}
               layout={{
-                default: ['1 2 3', '4 5 6', '7 8 9', '{bksp} 0 {enter}'],
+                default: ['1 2 3', '4 5 6', '7 8 9', '0 {bksp}'],
               }}
               theme={'hg-theme-default hg-layout-default myTheme'}
               buttonTheme={[
                 {
                   class: 'hg-red',
-                  buttons: '1 2 3 4 5 6 7 8 9 0 {bksp} {enter}',
+                  buttons: '1 2 3 4 5 6 7 8 9 0 {bksp}',
                 },
               ]}
             />
