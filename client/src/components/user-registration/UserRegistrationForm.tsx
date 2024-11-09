@@ -21,13 +21,14 @@ import { toast, Toaster } from 'react-hot-toast';
 // import DateSelector from './DateSelector';
 
 const departments = [
+  'Obstetrics & Gynaecology'
   'Paediatrics',
   'Surgery',
   'ENT',
   'Eye',
   'Pathology',
   'Radiology',
-  'Anaesthesia, Dental',
+  'Anaesthesia', 'Dental',
   'Medicine',
   'Homeopathic',
   'Psychiatry',
