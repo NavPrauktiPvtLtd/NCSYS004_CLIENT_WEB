@@ -21,7 +21,7 @@ import { toast, Toaster } from 'react-hot-toast';
 // import DateSelector from './DateSelector';
 
 const departments = [
-  'Obstetrics & Gynaecology'
+  'Obstetrics & Gynaecology',
   'Paediatrics',
   'Surgery',
   'ENT',

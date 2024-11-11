@@ -16,7 +16,7 @@ const customIcons: { [index: string]: { icon: IconDefinition; label: string; col
   3: {
     icon: faMeh,
     label: 'Good',
-    color: 'yellow',
+    color: '#fff01a',
   },
   4: {
     icon: faSmile,
