@@ -15,7 +15,7 @@ export default function UserDetails() {
         {!selectedArea ? (
           <>
             <div className={styles.userdetailsheading}>
-              {language === 'English' ? 'Select Area' : 'এলেকা নিৰ্ব্বাচন কৰক'}
+              {language === 'English' ? 'Select Area' : 'বিভাগ নিৰ্বাচন কৰক'}
             </div>
             <div className={styles.selectionContainer}>
               <AreaSelection

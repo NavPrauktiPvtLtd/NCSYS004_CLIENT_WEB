@@ -353,7 +353,7 @@ const UserRegistrationForm = () => {
                   buttons:
                     language === 'English'
                       ? 'q w e r t y u i o p a s d f g h j k l {shift} z x c v b n m {bksp} {space} Q W E R T Y U I O P A S D F G H J K L Z X C V B N M'
-                      : 'অ আ ই ঈ উ ঊ ঋ এ ঐ ও ঔ ক খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড ঢ ণ ত থ দ ধ ন প ফ ব ভ ম য ৰ ল ৱ {shift} {bksp} {space} ্ া ি ী ু ূ ৃ ে ৈ ো ৌ শ ষ স হ ক্ষ ড় ঢ় য় ট ঠ ড ঢ ণ ত থ দ ধ ন ৎ ং ঃ ঁ',
+                      : '্ া ি ী ু ূ ৃ ে ৈ ো ৌ অ আ ই ঈ উ ঊ ঋ এ ঐ ও ঔ ক খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড ঢ ণ ত থ দ ধ ন প ফ ব ভ ম য ৰ ল ৱ {shift} {bksp} {space} অ আ ই ঈ উ ঊ ঋ এ ঐ ও ঔ শ ষ স হ ক্ষ ড় ঢ় য় ট ঠ ড ঢ ণ ত থ দ ধ ন ৎ ং ঃ ঁ',
                 },
               ]}
             />
