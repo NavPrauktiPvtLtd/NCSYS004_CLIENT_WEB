@@ -89,6 +89,7 @@ const UserRegistrationForm = () => {
   const { setSessionId } = useTestSessionStore();
 
   const {
+    register,
     watch,
     setValue,
     handleSubmit,
@@ -212,6 +213,7 @@ const UserRegistrationForm = () => {
     <div className={styles.form}>
       <form onSubmit={handleSubmit(onSubmit)} style={{ width: '80vw', height: '100%' }}>
         <TextInput
+          {...register('name')}
           withAsterisk
           autoComplete="off"
           label={language === 'English' ? t('Name of the Patient') : 'ৰোগীৰ নাম'}
@@ -281,6 +283,7 @@ const UserRegistrationForm = () => {
         </div>
 
         <TextInput
+          {...register('phoneNumber')}
           withAsterisk
           autoComplete="off"
           label={language === 'English' ? t('Phone') : 'মোবাইল নম্বৰ'}
