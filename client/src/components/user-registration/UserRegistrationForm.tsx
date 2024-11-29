@@ -182,7 +182,6 @@ const UserRegistrationForm = () => {
   const customDisplay = {
     '{bksp}': '⌫ Remove',
     '{space}': 'Space',
-    '{enter}': 'Enter',
     '{shift}': 'Shift',
     '{default}': 'Shift',
   };
@@ -200,7 +199,10 @@ const UserRegistrationForm = () => {
     else if (button === '{bksp}') {
       const updatedValue = inputValue[inputField].slice(0, -1);
       setInputValue(prev => ({ ...prev, [inputField]: updatedValue }));
-    } else if (button !== '{space}' && button !== '{enter}') {
+    } else if (button === '{space}') {
+      const updatedValue = inputValue[inputField] + ' ';
+      setInputValue(prev => ({ ...prev, [inputField]: updatedValue }));
+    } else {
       const updatedValue = inputValue[inputField] + button;
       setInputValue(prev => ({ ...prev, [inputField]: updatedValue }));
     }
