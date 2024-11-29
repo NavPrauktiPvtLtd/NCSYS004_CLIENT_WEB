@@ -3,7 +3,6 @@ import UserRegistrationForm from '@/components/user-registration/UserRegistratio
 import Header from '@/components/common/Header';
 import { useAuthStore } from '@/store/store';
 import AreaSelection from '@/components/area/AreaSelection';
-// import UserRegistrationForm from '@/components/user-registration/trial';
 
 export default function UserDetails() {
   const { selectedArea, setSelectedArea, language } = useAuthStore();

@@ -89,7 +89,6 @@ const UserRegistrationForm = () => {
   const { setSessionId } = useTestSessionStore();
 
   const {
-    watch,
     setValue,
     handleSubmit,
     reset,
@@ -99,15 +98,6 @@ const UserRegistrationForm = () => {
   const { setMemberData, memberData } = useMemberDataStore();
   const navigate = useNavigate();
   const { playClickSound } = useClickSound();
-
-  const phoneNumber = watch('phoneNumber');
-
-  useEffect(() => {
-    if (phoneNumber && phoneNumber.length > 10) {
-      toast.error('Phone number cannot exceed 10 digits');
-      setValue('phoneNumber', phoneNumber.slice(0, 10));
-    }
-  }, [phoneNumber, setValue]);
 
   useEffect(() => {
     console.log(errors);
@@ -186,13 +176,12 @@ const UserRegistrationForm = () => {
     '{default}': 'Shift',
   };
 
-  const onKeyPress = (button: string) => {
-    playClickSound();
-    if (inputField === 'phoneNumber' && /\d/.test(button)) {
+  useEffect(() => {
+    if (inputField === 'phoneNumber') {
       const currentValue = inputValue[inputField];
+      setValue('phoneNumber', currentValue);
 
       if (currentValue.length >= 10) {
-        setValue('phoneNumber', currentValue);
         return;
       }
     }
@@ -200,6 +189,10 @@ const UserRegistrationForm = () => {
       const currentValue = inputValue[inputField];
       setValue('name', currentValue);
     }
+  }, [inputField, inputValue, setValue]);
+
+  const onKeyPress = (button: string) => {
+    playClickSound();
 
     if (button === '{shift}') handleShift();
     else if (button === '{bksp}') {
