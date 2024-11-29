@@ -89,7 +89,6 @@ const UserRegistrationForm = () => {
   const { setSessionId } = useTestSessionStore();
 
   const {
-    register,
     watch,
     setValue,
     handleSubmit,
@@ -193,9 +192,15 @@ const UserRegistrationForm = () => {
       const currentValue = inputValue[inputField];
 
       if (currentValue.length >= 10) {
+        setValue('phoneNumber', currentValue);
         return;
       }
     }
+    if (inputField === 'name') {
+      const currentValue = inputValue[inputField];
+      setValue('name', currentValue);
+    }
+
     if (button === '{shift}') handleShift();
     else if (button === '{bksp}') {
       const updatedValue = inputValue[inputField].slice(0, -1);
@@ -213,12 +218,14 @@ const UserRegistrationForm = () => {
     <div className={styles.form}>
       <form onSubmit={handleSubmit(onSubmit)} style={{ width: '80vw', height: '100%' }}>
         <TextInput
-          {...register('name')}
           withAsterisk
           autoComplete="off"
           label={language === 'English' ? t('Name of the Patient') : 'ৰোগীৰ নাম'}
           value={inputValue.name}
-          onChange={e => setInputValue({ ...inputValue, name: e.target.value })}
+          onChange={e => {
+            setInputValue({ ...inputValue, name: e.target.value });
+            setValue('name', e.target.value);
+          }}
           error={errors?.name?.message}
           size="md"
           required
@@ -283,12 +290,14 @@ const UserRegistrationForm = () => {
         </div>
 
         <TextInput
-          {...register('phoneNumber')}
           withAsterisk
           autoComplete="off"
           label={language === 'English' ? t('Phone') : 'মোবাইল নম্বৰ'}
           value={inputValue.phoneNumber}
-          onChange={e => setInputValue({ ...inputValue, phoneNumber: e.target.value })}
+          onChange={e => {
+            setInputValue({ ...inputValue, phoneNumber: e.target.value });
+            setValue('phoneNumber', e.target.value);
+          }}
           error={errors?.phoneNumber?.message}
           size="md"
           style={{ marginBottom: '1rem', width: '100%' }}
