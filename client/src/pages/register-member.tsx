@@ -3,9 +3,10 @@ import UserRegistrationForm from '@/components/user-registration/UserRegistratio
 import Header from '@/components/common/Header';
 import { useAuthStore } from '@/store/store';
 import AreaSelection from '@/components/area/AreaSelection';
+// import UserRegistrationForm from '@/components/user-registration/trial';
 
 export default function UserDetails() {
-  const { selectedArea, setSelectedArea } = useAuthStore();
+  const { selectedArea, setSelectedArea, language } = useAuthStore();
 
   return (
     <div style={{ height: '100%' }}>
@@ -13,15 +14,27 @@ export default function UserDetails() {
       <div className={styles.contents}>
         {!selectedArea ? (
           <>
-            <div className={styles.userdetailsheading}>Select Area</div>
+            <div className={styles.userdetailsheading}>
+              {language === 'English' ? 'Select Area' : 'এলেকা নিৰ্ব্বাচন কৰক'}
+            </div>
             <div className={styles.selectionContainer}>
-              <AreaSelection label="OPD" onClick={() => setSelectedArea('OPD')} tooltipText="Outpatient Department" />
-              <AreaSelection label="IPD" onClick={() => setSelectedArea('IPD')} tooltipText="Inpatient Department" />
+              <AreaSelection
+                label="OPD"
+                onClick={() => setSelectedArea('OPD')}
+                tooltipText={language === 'English' ? 'Outpatient Department' : 'বহিঃৰোগী বিভাগ'}
+              />
+              <AreaSelection
+                label="IPD"
+                onClick={() => setSelectedArea('IPD')}
+                tooltipText={language === 'English' ? 'Inpatient Department' : 'আন্তঃৰোগী বিভাগ'}
+              />
             </div>
           </>
         ) : (
           <>
-            <div className={styles.userdetailsheading}>Enter Your Details</div>
+            <div className={styles.userdetailsheading}>
+              {language === 'English' ? 'Enter Your Details' : 'আপোনাৰ সবিশেষ লিখক'}
+            </div>
             <UserRegistrationForm />
           </>
         )}

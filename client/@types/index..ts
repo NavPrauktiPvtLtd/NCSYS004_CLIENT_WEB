@@ -38,6 +38,7 @@ export type Questions = {
   id: string;
   is_active: boolean;
   question_text_primary: string;
+  question_text_secondary: string;
   questionType: QuestionType.Rating;
   kioskClientId: string;
 };

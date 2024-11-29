@@ -20,7 +20,7 @@ const QUESTIONS_PER_PAGE = 3;
 export default function Questionnaire() {
   const navigate = useNavigate();
 
-  const { setSelectedArea } = useAuthStore();
+  const { setSelectedArea, language } = useAuthStore();
 
   const [questionList, setQuestionList] = useState<Questions[]>([]);
 
@@ -58,6 +58,7 @@ export default function Questionnaire() {
             const {
               data: { questions },
             } = await ServerAPI.getQuestionList(kioskSerialID, selectedArea);
+            console.log({ questions });
             setQuestionList(questions);
 
             // Initialize answerObj with default value of 1 for each question
@@ -164,7 +165,7 @@ export default function Questionnaire() {
                 fontFamily: 'Montserrat',
               }}
             >
-              Loading Questions ...
+              {language === 'English' ? 'Loading Questions ...' : 'প্ৰশ্নবোৰ লোড হৈ আছে ...'}
             </p>
           </div>
         ) : (
@@ -182,7 +183,7 @@ export default function Questionnaire() {
                 justifyContent: 'center',
               }}
             >
-              Please select the answers below
+              {language === 'English' ? 'Please select the answer below' : 'অনুগ্ৰহ কৰি তলৰ উত্তৰটো বাছি লওক'}
             </div>
             <form
               onSubmit={onSubmit}
@@ -216,8 +217,10 @@ export default function Questionnaire() {
                     }}
                   >
                     <h2 className={styles.userQuestionHeading}>
-                      <span style={{ color: 'rgb(100, 50, 50)', marginRight: 10 }}>{startIdx + index + 1 + '.'}</span>
-                      {data.question_text_primary}
+                      {language === 'English' && (
+                        <span style={{ color: 'rgb(100, 50, 50)', marginRight: 10 }}>{startIdx + index + 1 + '.'}</span>
+                      )}
+                      {language === 'English' ? data.question_text_primary : data.question_text_secondary}
                     </h2>
                     <RadioGroupRating
                       value={answerObj[data.id]}
@@ -243,7 +246,7 @@ export default function Questionnaire() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '35%' }}>
                   {endIdx >= questionList.length && (
                     <Button size="xl" uppercase type="submit" color="red" radius="md">
-                      Submit
+                      {language === 'English' ? 'Submit' : 'দাখিল কৰক'}
                     </Button>
                   )}
                 </div>
@@ -263,7 +266,7 @@ export default function Questionnaire() {
                     }}
                     disabled={currentPage <= 0}
                   >
-                    <FaAngleLeft /> Prev
+                    <FaAngleLeft /> {language === 'English' ? 'Prev' : 'পূৰ্বৱৰ্তী'}
                   </Button>
                   <Button
                     size="md"
@@ -278,7 +281,7 @@ export default function Questionnaire() {
                     }}
                     disabled={endIdx >= questionList.length}
                   >
-                    Next <FaAngleRight />
+                    {language === 'English' ? 'Next' : 'পৰৱৰ্তী'} <FaAngleRight />
                   </Button>
                 </div>
               </Group>

@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import styles from '../../styles/Details.module.css';
-import { TextInput, Group, Select } from '@mantine/core';
+import { Group, TextInput } from '@mantine/core';
 import { FaChevronRight } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ServerAPI from '../../../API/ServerAPI';
-import { GENDER } from '../../../@types/index.';
 import { UserFormData, userDetailsFormSchema } from '../../../validation';
 import useClickSound from '@/hooks/useClickSound';
 import { PageRoutes } from '../../../@types/index.';
@@ -14,137 +13,46 @@ import { useNavigate } from 'react-router-dom';
 import Keyboard from 'react-simple-keyboard';
 import 'react-simple-keyboard/build/css/index.css';
 import '../../styles/keyboard.css';
-import { useTranslation } from 'react-i18next';
 import { useKioskSerialNumberStore } from '@/store/store';
 import { useTestSessionStore } from '@/store/store';
 import { toast, Toaster } from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 const UserRegistrationForm = () => {
   const { language } = useAuthStore();
+  const { t } = useTranslation();
 
-  const departments = [
-    {
-      label: language === 'English' ? 'Obstetrics & Gynaecology' : 'প্ৰসূতি আৰু গাইনিক’লজি',
-      value: 'Obstetrics & Gynaecology',
-    },
-    {
-      label: language === 'English' ? 'Paediatrics' : 'শিশু চিকিৎসা',
-      value: 'Paediatrics',
-    },
-    {
-      label: language === 'English' ? 'Surgery' : 'শল্য চিকিৎসা',
-      value: 'Surgery',
-    },
-    {
-      label: language === 'English' ? 'ENT' : 'কান-নাক-ডিঙি',
-      value: 'ENT',
-    },
-    {
-      label: language === 'English' ? 'Eye' : 'চকু',
-      value: 'Eye',
-    },
-    {
-      label: language === 'English' ? 'Pathology' : 'পাথলজি',
-      value: 'Pathology',
-    },
-    {
-      label: language === 'English' ? 'Radiology' : 'ৰেডিঅ’লজি',
-      value: 'Radiology',
-    },
-    {
-      label: language === 'English' ? 'Anaesthesia' : 'এনেস্থেচিয়া',
-      value: 'Anaesthesia',
-    },
-    {
-      label: language === 'English' ? 'Dental' : 'দন্ত চিকিৎসা',
-      value: 'Dental',
-    },
-    {
-      label: language === 'English' ? 'Medicine' : 'ঔষধ',
-      value: 'Medicine',
-    },
-    {
-      label: language === 'English' ? 'Homeopathic' : 'হোমিঅ’পেথিক',
-      value: 'Homeopathic',
-    },
-    {
-      label: language === 'English' ? 'Psychiatry' : 'মনোৰোগবিদ্যা',
-      value: 'Psychiatry',
-    },
-    {
-      label: language === 'English' ? 'Emergency' : 'জৰুৰীকালীন',
-      value: 'Emergency',
-    },
-  ];
-
-  const [gender, setGender] = useState<GENDER | null>(null);
-  const [department, setDepartment] = useState('');
+  const [inputField, setInputField] = useState<'name' | 'phoneNumber'>('name');
   const [keyboardVisibility, setKeyboardVisibility] = useState(true);
   const [keyboardNumberVisibility, setKeyboardNumberVisibility] = useState(false);
-  const [inputField, setInputField] = useState<'name' | 'phoneNumber'>('name');
   const [inputValue, setInputValue] = useState({ name: '', phoneNumber: '' });
   const [layoutName, setLayoutName] = useState('default');
-  const { t } = useTranslation();
+
   const { kioskSerialID } = useKioskSerialNumberStore();
   const { setSessionId } = useTestSessionStore();
-
   const {
-    watch,
-    setValue,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<UserFormData>({ resolver: zodResolver(userDetailsFormSchema) });
-
   const { setMemberData, memberData } = useMemberDataStore();
   const navigate = useNavigate();
   const { playClickSound } = useClickSound();
-
-  const phoneNumber = watch('phoneNumber');
-
-  useEffect(() => {
-    if (phoneNumber && phoneNumber.length > 10) {
-      toast.error('Phone number cannot exceed 10 digits');
-      setValue('phoneNumber', phoneNumber.slice(0, 10));
-    }
-  }, [phoneNumber, setValue]);
 
   useEffect(() => {
     console.log(errors);
   }, [errors]);
 
-  const handleGenderValue = (value: GENDER) => {
-    playClickSound();
-    setGender(value as GENDER);
-  };
-
   const onSubmit = async (data: UserFormData) => {
-    if (!gender) {
-      toast.error('Please select your gender!');
-      return;
-    }
-    if (!department) {
-      toast.error('Please select the department!');
-      return;
-    }
     playClickSound();
-
-    const formattedData = {
-      ...data,
-      dob: new Date('2000-01-01'),
-      gender,
-    };
-
-    console.log(formattedData);
 
     try {
-      const result = await ServerAPI.createUser(formattedData);
-      setGender(null);
+      const result = await ServerAPI.createUser(data);
       setMemberData(result.data.user);
       navigate(PageRoutes.AUTH_USER_QUESTIONNAIRE);
       reset();
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error('Something went wrong, Click the home button');
     }
   };
@@ -158,44 +66,8 @@ const UserRegistrationForm = () => {
     setSessionId(sessionData.id);
   };
 
-  useEffect(() => {
-    setSessionIdFn();
-  }, [memberData?.id]);
-
-  useEffect(() => {
-    if (gender) {
-      setValue('gender', gender);
-    }
-  }, [gender, setValue]);
-
-  const handleShift = () => {
-    const newLayoutName = layoutName === 'default' ? 'shift' : 'default';
-    setLayoutName(newLayoutName);
-  };
-
-  const handleInputClick = (fieldName: 'name' | 'phoneNumber') => {
-    setInputField(fieldName);
-    setKeyboardVisibility(fieldName === 'name');
-    setKeyboardNumberVisibility(fieldName === 'phoneNumber');
-  };
-
-  const customDisplay = {
-    '{bksp}': '⌫ Remove',
-    '{space}': 'Space',
-    '{enter}': 'Enter',
-    '{shift}': 'Shift',
-    '{default}': 'Shift',
-  };
-
   const onKeyPress = (button: string) => {
     playClickSound();
-    if (inputField === 'phoneNumber' && /\d/.test(button)) {
-      const currentValue = inputValue[inputField];
-
-      if (currentValue.length >= 10) {
-        return;
-      }
-    }
     if (button === '{shift}') handleShift();
     else if (button === '{bksp}') {
       const updatedValue = inputValue[inputField].slice(0, -1);
@@ -204,6 +76,28 @@ const UserRegistrationForm = () => {
       const updatedValue = inputValue[inputField] + button;
       setInputValue(prev => ({ ...prev, [inputField]: updatedValue }));
     }
+  };
+
+  const handleShift = () => {
+    setLayoutName(prev => (prev === 'default' ? 'shift' : 'default'));
+  };
+
+  const handleInputClick = (fieldName: 'name' | 'phoneNumber') => {
+    setInputField(fieldName);
+    setKeyboardVisibility(fieldName === 'name');
+    setKeyboardNumberVisibility(fieldName === 'phoneNumber');
+  };
+
+  useEffect(() => {
+    setSessionIdFn();
+  }, [memberData?.id]);
+
+  const customDisplay = {
+    '{bksp}': '⌫ Remove',
+    '{space}': 'Space',
+    '{enter}': 'Enter',
+    '{shift}': 'Shift',
+    '{default}': 'Shift',
   };
 
   return (
@@ -221,63 +115,6 @@ const UserRegistrationForm = () => {
           style={{ marginBottom: '1rem', width: '100%' }}
           onClick={() => handleInputClick('name')}
         />
-
-        <div className={styles.genderDateContainer}>
-          <div className={styles.parentContainer}>
-            <label className={styles.genderDateLabel}>
-              {language === 'English' ? t('gender') : 'লিংগ'}
-              <span style={{ color: 'red', fontWeight: 'normal' }}>*</span>
-            </label>
-            <div className={styles.genderOptions}>
-              <input
-                type="checkbox"
-                id="male"
-                value={GENDER.MALE}
-                checked={gender === GENDER.MALE}
-                onChange={() => handleGenderValue(GENDER.MALE)}
-              />
-              <label htmlFor="male">{language === 'English' ? t('male') : 'পুৰুষ'}</label>
-
-              <input
-                type="checkbox"
-                id="female"
-                value={GENDER.FEMALE}
-                checked={gender === GENDER.FEMALE}
-                onChange={() => handleGenderValue(GENDER.FEMALE)}
-              />
-              <label htmlFor="female">{language === 'English' ? t('female') : 'মহিলা'}</label>
-
-              <input
-                type="checkbox"
-                id="others"
-                value={GENDER.OTHERS}
-                checked={gender === GENDER.OTHERS}
-                onChange={() => handleGenderValue(GENDER.OTHERS)}
-              />
-              <label htmlFor="others">{language === 'English' ? t('others') : 'অন্যান্য'}</label>
-            </div>
-          </div>
-
-          <div className={styles.parentContainer}>
-            <label className={styles.genderDateLabel}>
-              {language === 'English' ? t('Admitted Department') : 'নামভৰ্তি বিভাগ'}
-              <span style={{ color: 'red', fontWeight: 'normal' }}>*</span>
-            </label>
-            <Select
-              data={departments}
-              placeholder={language === 'English' ? 'Select the department' : 'বিভাগ বাছনি কৰক'}
-              value={department}
-              onChange={val => {
-                setDepartment(val as string);
-                setValue('department', val as string);
-                playClickSound();
-              }}
-              style={{ width: '500px' }}
-              maxDropdownHeight={450}
-            />
-          </div>
-        </div>
-
         <TextInput
           withAsterisk
           autoComplete="off"
@@ -290,7 +127,6 @@ const UserRegistrationForm = () => {
           onClick={() => handleInputClick('phoneNumber')}
           maxLength={10}
         />
-
         <Group position="center" mt="md">
           <button type="submit" className={styles.button}>
             {language === 'English' ? 'Submit' : 'দাখিল কৰক'}

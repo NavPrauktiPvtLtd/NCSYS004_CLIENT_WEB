@@ -184,3 +184,12 @@
   justify-content: center;
   margin-top: 20px;
 }
+
+.languageSelectorParentContainer {
+  width: 100%;
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 25px;
+}

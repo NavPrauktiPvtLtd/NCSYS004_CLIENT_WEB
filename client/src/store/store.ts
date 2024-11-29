@@ -4,23 +4,27 @@ import { User } from '../../@types/index.';
 interface AuthState {
   accessToken: string | null;
   selectedUser: string | null; // store the selcted user id here
+  language: 'English' | 'Assamese';
   selectedArea: 'OPD' | 'IPD' | undefined;
   setSelectedUser: (user: string) => void;
   setToken: (token: string) => void;
   clearToken: () => void;
   setSelectedUserId: (id: string) => void;
   setSelectedArea: (area: 'OPD' | 'IPD' | undefined) => void;
+  setLanguage: (language: 'English' | 'Assamese') => void;
 }
 
 export const useAuthStore = create<AuthState>()(set => ({
   accessToken: null,
   selectedUser: null,
   selectedArea: undefined,
+  language: 'English',
   setSelectedUser: user => set(state => ({ ...state, selectedUser: user })),
   setToken: token => set(state => ({ ...state, accessToken: token })),
   clearToken: () => set(state => ({ ...state, accessToken: null })),
   setSelectedUserId: id => set(state => ({ ...state, selectedUser: id })),
   setSelectedArea: area => set(state => ({ ...state, selectedArea: area })),
+  setLanguage: language => set(state => ({ ...state, language }))
 }));
 
 //state for storing kiosk serial id
