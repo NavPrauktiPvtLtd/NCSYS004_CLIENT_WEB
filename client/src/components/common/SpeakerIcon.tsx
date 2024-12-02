@@ -1,12 +1,10 @@
-import { useAudioStore, useAuthStore } from '@/store/store';
+import { useAudioStore } from '@/store/store';
 import { GiSpeaker, GiSpeakerOff } from 'react-icons/gi';
 import styles from '../../styles/Ecgsteps.module.css';
 import HomeButton from './HomeButton';
 
 const SpeakerIcon = () => {
   const { isOn, setIsOn } = useAudioStore();
-
-  const { setSelectedArea } = useAuthStore();
 
   const toggleIsOn = () => setIsOn(!isOn);
 
@@ -19,7 +17,7 @@ const SpeakerIcon = () => {
         alignItems: 'center',
       }}
     >
-      <HomeButton setSelectedArea={setSelectedArea} />
+      <HomeButton />
       <div className={styles.divspeakericon} onClick={toggleIsOn}>
         {isOn ? <GiSpeaker className={styles.iconspeaker} /> : <GiSpeakerOff className={styles.iconspeaker} />}
       </div>

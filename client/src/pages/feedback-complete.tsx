@@ -9,7 +9,7 @@ import { useAuthStore } from '@/store/store';
 const RegistrationComplete = () => {
   const navigate = useNavigate();
 
-  const { setSelectedArea } = useAuthStore();
+  const { setSelectedArea, language } = useAuthStore();
 
   useEffect(() => {
     const redirectTimer = setTimeout(() => {
@@ -25,7 +25,11 @@ const RegistrationComplete = () => {
       <div style={{ marginTop: '1rem' }}>
         <TestCompletedSvg></TestCompletedSvg>
       </div>
-      <h1 className={styles.registrationcompletetext}>Thank you for providing your valuable feedback</h1>
+      <h1 className={styles.registrationcompletetext}>
+        {language === 'English'
+          ? 'Thank you for providing your valuable feedback'
+          : 'আপোনাৰ বহুমূলীয়া মতামত দিয়াৰ বাবে ধন্যবাদ'}
+      </h1>
     </div>
   );
 };

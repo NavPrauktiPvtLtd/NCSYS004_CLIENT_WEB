@@ -9,7 +9,7 @@ export default function UserDetails() {
 
   return (
     <div style={{ height: '100%' }}>
-      <Header setSelectedArea={setSelectedArea} />
+      <Header />
       <div className={styles.contents}>
         {!selectedArea ? (
           <>

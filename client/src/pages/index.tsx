@@ -64,7 +64,9 @@ export default function Home() {
           <HomePageSvg />
         </div>
         <div className={styles2.languageSelectorParentContainer}>
-          <label style={{ fontWeight: '500' }}>{language === 'English' ? 'Preferred Language' : 'পচন্দৰ ভাষা'}</label>
+          <label style={{ fontWeight: '500', fontSize: 20 }}>
+            {language === 'English' ? 'Preferred Language' : 'পচন্দৰ ভাষা'}
+          </label>
           <div className={styles2.genderOptions}>
             <input
               type="checkbox"

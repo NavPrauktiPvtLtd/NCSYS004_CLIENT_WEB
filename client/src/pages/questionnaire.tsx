@@ -20,7 +20,7 @@ const QUESTIONS_PER_PAGE = 3;
 export default function Questionnaire() {
   const navigate = useNavigate();
 
-  const { setSelectedArea, language } = useAuthStore();
+  const { language } = useAuthStore();
 
   const [questionList, setQuestionList] = useState<Questions[]>([]);
 
@@ -153,7 +153,7 @@ export default function Questionnaire() {
 
   return (
     <div style={{ height: '100%' }}>
-      <Header setSelectedArea={setSelectedArea} />
+      <Header />
       <div className={styles.contents}>
         {loading ? (
           <div className=" flex items-center gap-1">

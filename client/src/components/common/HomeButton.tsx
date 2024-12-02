@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import useClickSound from '@/hooks/useClickSound';
 import { Tooltip } from '@mantine/core';
 import { FaHome } from 'react-icons/fa';
+import { useAuthStore } from '@/store/store';
 
-type Props = {
-  setSelectedArea: (area: 'OPD' | 'IPD' | undefined) => void;
-};
+const HomeButton = () => {
+  const { setSelectedArea } = useAuthStore();
 
-const HomeButton = ({ setSelectedArea }: Props) => {
   const navigate = useNavigate();
 
   const { playClickSound } = useClickSound();

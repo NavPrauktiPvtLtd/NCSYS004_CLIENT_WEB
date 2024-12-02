@@ -180,10 +180,6 @@ const UserRegistrationForm = () => {
     if (inputField === 'phoneNumber') {
       const currentValue = inputValue[inputField];
       setValue('phoneNumber', currentValue);
-
-      if (currentValue.length >= 10) {
-        return;
-      }
     }
     if (inputField === 'name') {
       const currentValue = inputValue[inputField];
@@ -193,6 +189,13 @@ const UserRegistrationForm = () => {
 
   const onKeyPress = (button: string) => {
     playClickSound();
+    if (inputField === 'phoneNumber' && button !== '{bksp}') {
+      const currentValue = inputValue[inputField];
+
+      if (currentValue.length >= 10) {
+        return;
+      }
+    }
 
     if (button === '{shift}') handleShift();
     else if (button === '{bksp}') {
