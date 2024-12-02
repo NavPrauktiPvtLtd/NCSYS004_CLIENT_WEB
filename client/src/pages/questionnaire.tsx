@@ -17,6 +17,15 @@ import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 
 const QUESTIONS_PER_PAGE = 3;
 
+function convertToAssameseNumber(number: number) {
+  const assameseDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+  return number
+    .toString()
+    .split('')
+    .map(digit => assameseDigits[parseInt(digit, 10)])
+    .join('');
+}
+
 export default function Questionnaire() {
   const navigate = useNavigate();
 
@@ -217,9 +226,11 @@ export default function Questionnaire() {
                     }}
                   >
                     <h2 className={styles.userQuestionHeading}>
-                      {language === 'English' && (
-                        <span style={{ color: 'rgb(100, 50, 50)', marginRight: 10 }}>{startIdx + index + 1 + '.'}</span>
-                      )}
+                      <span style={{ color: 'rgb(100, 50, 50)', marginRight: 10 }}>
+                        {language === 'English'
+                          ? startIdx + index + 1 + '.'
+                          : `${convertToAssameseNumber(startIdx + index + 1)}.`}
+                      </span>
                       {language === 'English' ? data.question_text_primary : data.question_text_secondary}
                     </h2>
                     <RadioGroupRating
