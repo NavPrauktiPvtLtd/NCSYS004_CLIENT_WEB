@@ -57,6 +57,7 @@ const RadioGroupRating: React.FC<RadioGroupRatingProps> = ({ value, onChange }) 
     transition: 'transform 0.3s, background-color 0.3s',
     backgroundColor: isSelected ? 'white' : 'transparent',
     transform: isSelected ? 'scale(1.3)' : 'scale(1)',
+    fontSize: '1.3rem',
   });
 
   const getLabelStyle = (isSelected: boolean) => ({
@@ -66,6 +67,7 @@ const RadioGroupRating: React.FC<RadioGroupRatingProps> = ({ value, onChange }) 
     fontWeight: 500,
     fontFamily: 'cursive',
     cursor: 'pointer',
+    fontSize: '1.5rem',
   });
 
   return (
@@ -74,6 +76,7 @@ const RadioGroupRating: React.FC<RadioGroupRatingProps> = ({ value, onChange }) 
         display: 'flex',
         alignItems: 'center',
         height: 130,
+        gap: '50px',
         justifyContent: 'center',
         width: '100%',
       }}
@@ -87,7 +90,7 @@ const RadioGroupRating: React.FC<RadioGroupRatingProps> = ({ value, onChange }) 
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '8px',
+              gap: '16px',
               height: '100%',
               width: '200px',
             }}
