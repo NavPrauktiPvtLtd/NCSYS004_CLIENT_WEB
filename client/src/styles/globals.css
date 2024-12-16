@@ -1,13 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap');
 @import url('https://fonts.google.com/share?selection.family=Exo+2:ital,wght@0,100..900;1,100..900|Poppins:wght@300;400;500;600;700');
+@font-face{
+  font-family: "Banikanta";
+  src:local("Banikanta"),
+  url('../assets/fonts/Banikanta.ttf') 
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-family: 'Banikanta', sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: 'Banikanta', cursive;
+}
+
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
-  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono',
+  --font-mono: 'Banikanta',ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', 'Oxygen Mono',
     'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
 
   --primary-color: #007bff;

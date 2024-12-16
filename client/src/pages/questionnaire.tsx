@@ -192,7 +192,11 @@ export default function Questionnaire() {
                 justifyContent: 'center',
               }}
             >
-              {language === 'English' ? 'Please select the answer below' : 'অনুগ্ৰহ কৰি তলৰ উত্তৰটো বাছি লওক'}
+              {language === 'English' ? (
+                'Please select the answer below'
+              ) : (
+                <span style={{ fontFamily: 'Banikanta' }}>অনুগ্ৰহ কৰি তলৰ উত্তৰটো বাছি লওক</span>
+              )}
             </div>
             <form
               onSubmit={onSubmit}
@@ -231,7 +235,11 @@ export default function Questionnaire() {
                           ? startIdx + index + 1 + '.'
                           : `${convertToAssameseNumber(startIdx + index + 1)}.`}
                       </span>
-                      {language === 'English' ? data.question_text_primary : data.question_text_secondary}
+                      {language === 'English' ? (
+                        data.question_text_primary
+                      ) : (
+                        <span style={{ fontFamily: 'Banikanta' }}>{data.question_text_secondary}</span>
+                      )}
                     </h2>
                     <RadioGroupRating
                       value={answerObj[data.id]}
