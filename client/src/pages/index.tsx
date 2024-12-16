@@ -56,7 +56,13 @@ export default function Home() {
     <>
       <div className={styles.contents}>
         <div className="">
-          <div className={styles.feedback} style={{ color: 'rgb(232, 80, 91)' }}>
+          <div
+            className={styles.feedback}
+            style={{
+              color: 'rgb(232, 80, 91)',
+              fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined,
+            }}
+          >
             {language === 'English' ? 'Give Us Your Valuable Feedback Here' : 'ইয়াত আমাক আপোনাৰ মূল্যৱান মতামত দিয়ক'}
           </div>
         </div>
@@ -64,7 +70,13 @@ export default function Home() {
           <HomePageSvg />
         </div>
         <div className={styles2.languageSelectorParentContainer}>
-          <label style={{ fontWeight: '500', fontSize: 20 }}>
+          <label
+            style={{
+              fontWeight: '500',
+              fontSize: 20,
+              fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined,
+            }}
+          >
             {language === 'English' ? 'Preferred Language' : 'পচন্দৰ ভাষা'}
           </label>
           <div className={styles2.genderOptions}>
@@ -84,15 +96,30 @@ export default function Home() {
               checked={language === 'Assamese'}
               onChange={() => setLanguage('Assamese')}
             />
-            <label htmlFor="assamese">অসমীয়া</label>
+            <label
+              htmlFor="assamese"
+              style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+            >
+              অসমীয়া
+            </label>
           </div>
         </div>
-        <div className={styles.welcome} style={{ color: 'rgb(232, 80, 91)' }}>
+        <div
+          className={styles.welcome}
+          style={{
+            color: 'rgb(232, 80, 91)',
+            fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined,
+          }}
+        >
           {language === 'English' ? 'Welcome' : 'স্বাগতম'}
         </div>
 
         <div className={styles.buttons}>
-          <button className={styles.button} onClick={handleButton}>
+          <button
+            className={styles.button}
+            onClick={handleButton}
+            style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+          >
             {language === 'English' ? 'Start' : 'আৰম্ভ কৰক'}
           </button>
         </div>

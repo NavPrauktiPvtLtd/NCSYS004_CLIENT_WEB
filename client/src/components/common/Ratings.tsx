@@ -11,30 +11,30 @@ interface RadioGroupRatingProps {
 const RadioGroupRating: React.FC<RadioGroupRatingProps> = ({ value, onChange }) => {
   const { language } = useAuthStore();
 
-  const customIcons: { [index: string]: { icon: IconDefinition; label: string; color: string } } = {
+  const customIcons: { [index: string]: { icon: IconDefinition; label: string | JSX.Element; color: string } } = {
     1: {
       icon: faAngry,
-      label: language === 'English' ? 'Poor' : 'বেয়া',
+      label: language === 'English' ? 'Poor' : <span style={{ fontFamily: 'Banikanta' }}>বেয়া</span>,
       color: 'red',
     },
     2: {
       icon: faFrown,
-      label: language === 'English' ? 'Average' : 'আংশিকভাৱে ভাল',
+      label: language === 'English' ? 'Average' : <span style={{ fontFamily: 'Banikanta' }}>আংশিকভাৱে ভাল</span>,
       color: 'orange',
     },
     3: {
       icon: faMeh,
-      label: language === 'English' ? 'Good' : 'ভাল',
+      label: language === 'English' ? 'Good' : <span style={{ fontFamily: 'Banikanta' }}>ভাল</span>,
       color: '#fff01a',
     },
     4: {
       icon: faSmile,
-      label: language === 'English' ? 'Very Good' : 'বৰ ভাল',
+      label: language === 'English' ? 'Very Good' : <span style={{ fontFamily: 'Banikanta' }}>বৰ ভাল</span>,
       color: 'lightgreen',
     },
     5: {
       icon: faGrin,
-      label: language === 'English' ? 'Excellent' : 'খুব ভাল',
+      label: language === 'English' ? 'Excellent' : <span style={{ fontFamily: 'Banikanta' }}>খুব ভাল</span>,
       color: 'green',
     },
   };
@@ -97,7 +97,7 @@ const RadioGroupRating: React.FC<RadioGroupRatingProps> = ({ value, onChange }) 
             key={key}
             onClick={() => handleClick(key)}
           >
-            <div style={getStyle(isSelected, color)} title={label}>
+            <div style={getStyle(isSelected, color)}>
               <FontAwesomeIcon icon={icon} size="3x" color={color} />
             </div>
             <div style={getLabelStyle(isSelected)}>{label}</div>

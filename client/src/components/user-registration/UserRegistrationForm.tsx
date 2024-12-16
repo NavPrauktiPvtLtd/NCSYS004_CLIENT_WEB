@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import styles from '../../styles/Details.module.css';
-import { TextInput, Group, Select } from '@mantine/core';
+import { Group } from '@mantine/core';
 import { FaChevronRight } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,7 +32,7 @@ const UserRegistrationForm = () => {
       value: 'Paediatrics',
     },
     {
-      label: language === 'English' ? 'Surgery' : 'শল্য চিকিৎসা',
+      label: language === 'English' ? 'Surgery' : 'অস্ত্ৰোপচাৰ',
       value: 'Surgery',
     },
     {
@@ -213,25 +213,44 @@ const UserRegistrationForm = () => {
   return (
     <div className={styles.form}>
       <form onSubmit={handleSubmit(onSubmit)} style={{ width: '80vw', height: '100%' }}>
-        <TextInput
-          withAsterisk
-          autoComplete="off"
-          label={language === 'English' ? t('Name of the Patient') : 'ৰোগীৰ নাম'}
-          value={inputValue.name}
-          onChange={e => {
-            setInputValue({ ...inputValue, name: e.target.value });
-            setValue('name', e.target.value);
-          }}
-          error={errors?.name?.message}
-          size="md"
-          required
-          style={{ marginBottom: '1rem', width: '100%' }}
-          onClick={() => handleInputClick('name')}
-        />
-
+        <div className={styles.parentContainer}>
+          <label
+            className={styles.genderDateLabel}
+            style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+          >
+            {language === 'English' ? t('Name of the Patient') : 'ৰোগীৰ নাম'}
+            <span style={{ color: 'red', fontWeight: 'normal' }}>*</span>
+          </label>
+          <input
+            value={inputValue.name}
+            onChange={e => {
+              setInputValue({ ...inputValue, name: e.target.value });
+              setValue('name', e.target.value);
+            }}
+            type="text"
+            style={{
+              marginBottom: '1rem',
+              width: '100%',
+              fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined,
+              height: 42,
+              borderColor: '#00000030',
+              paddingLeft: 7,
+              paddingRight: 7,
+              backgroundColor: 'white',
+              color: 'black',
+              borderRadius: 4,
+              MozAppearance: 'textfield',
+              appearance: 'none',
+            }}
+            onClick={() => handleInputClick('name')}
+          />
+        </div>
         <div className={styles.genderDateContainer}>
           <div className={styles.parentContainer}>
-            <label className={styles.genderDateLabel}>
+            <label
+              className={styles.genderDateLabel}
+              style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+            >
               {language === 'English' ? t('gender') : 'লিংগ'}
               <span style={{ color: 'red', fontWeight: 'normal' }}>*</span>
             </label>
@@ -242,8 +261,14 @@ const UserRegistrationForm = () => {
                 value={GENDER.MALE}
                 checked={gender === GENDER.MALE}
                 onChange={() => handleGenderValue(GENDER.MALE)}
+                style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
               />
-              <label htmlFor="male">{language === 'English' ? t('male') : 'পুৰুষ'}</label>
+              <label
+                htmlFor="male"
+                style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+              >
+                {language === 'English' ? t('male') : 'পুৰুষ'}
+              </label>
 
               <input
                 type="checkbox"
@@ -251,8 +276,14 @@ const UserRegistrationForm = () => {
                 value={GENDER.FEMALE}
                 checked={gender === GENDER.FEMALE}
                 onChange={() => handleGenderValue(GENDER.FEMALE)}
+                style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
               />
-              <label htmlFor="female">{language === 'English' ? t('female') : 'মহিলা'}</label>
+              <label
+                htmlFor="female"
+                style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+              >
+                {language === 'English' ? t('female') : 'মহিলা'}
+              </label>
 
               <input
                 type="checkbox"
@@ -260,49 +291,102 @@ const UserRegistrationForm = () => {
                 value={GENDER.OTHERS}
                 checked={gender === GENDER.OTHERS}
                 onChange={() => handleGenderValue(GENDER.OTHERS)}
+                style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
               />
-              <label htmlFor="others">{language === 'English' ? t('others') : 'অন্যান্য'}</label>
+              <label
+                htmlFor="others"
+                style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+              >
+                {language === 'English' ? t('others') : 'অন্যান্য'}
+              </label>
             </div>
           </div>
 
           <div className={styles.parentContainer}>
-            <label className={styles.genderDateLabel}>
+            <label
+              className={styles.genderDateLabel}
+              style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+            >
               {language === 'English' ? t('Admitted Department') : 'নামভৰ্তি বিভাগ'}
               <span style={{ color: 'red', fontWeight: 'normal' }}>*</span>
             </label>
-            <Select
-              data={departments}
-              placeholder={language === 'English' ? 'Select the department' : 'বিভাগ বাছনি কৰক'}
+            <select
               value={department}
-              onChange={val => {
-                setDepartment(val as string);
-                setValue('department', val as string);
+              onChange={e => {
+                const selectedValue = e.target.value;
+                setDepartment(selectedValue);
+                setValue('department', selectedValue);
                 playClickSound();
               }}
-              style={{ width: '500px' }}
-              maxDropdownHeight={450}
-            />
+              style={{
+                width: '500px',
+                maxHeight: '450px',
+                overflowY: 'auto',
+                height: 40,
+                borderColor: '#00000030',
+                paddingLeft: 7,
+                paddingRight: 7,
+                backgroundColor: 'white',
+                color: 'black',
+                borderRadius: 4,
+                fontFamily: language !== 'English' ? 'Banikanta' : undefined,
+              }}
+            >
+              <option value="" style={{ fontFamily: language !== 'English' ? 'Banikanta' : undefined }}>
+                {language === 'English' ? 'Select the department' : 'বিভাগ বাছনি কৰক'}
+              </option>
+              {departments.map(dept => (
+                <option
+                  key={dept.value}
+                  value={dept.value}
+                  style={{ fontFamily: language !== 'English' ? 'Banikanta' : undefined }}
+                >
+                  {dept.label}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
-        <TextInput
-          withAsterisk
-          autoComplete="off"
-          label={language === 'English' ? t('Phone') : 'মোবাইল নম্বৰ'}
-          value={inputValue.phoneNumber}
-          onChange={e => {
-            setInputValue({ ...inputValue, phoneNumber: e.target.value });
-            setValue('phoneNumber', e.target.value);
-          }}
-          error={errors?.phoneNumber?.message}
-          size="md"
-          style={{ marginBottom: '1rem', width: '100%' }}
-          onClick={() => handleInputClick('phoneNumber')}
-          maxLength={10}
-        />
+        <div className={styles.parentContainer}>
+          <label
+            className={styles.genderDateLabel}
+            style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+          >
+            {language === 'English' ? t('Phone') : 'মোবাইল নম্বৰ'}
+            <span style={{ color: 'red', fontWeight: 'normal' }}>*</span>
+          </label>
+          <input
+            value={inputValue.phoneNumber}
+            onChange={e => {
+              setInputValue({ ...inputValue, phoneNumber: e.target.value });
+              setValue('phoneNumber', e.target.value);
+            }}
+            type="number"
+            style={{
+              marginBottom: '1rem',
+              width: '100%',
+              fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined,
+              height: 42,
+              borderColor: '#00000030',
+              paddingLeft: 7,
+              paddingRight: 7,
+              backgroundColor: 'white',
+              color: 'black',
+              borderRadius: 4,
+              MozAppearance: 'textfield',
+              appearance: 'none',
+            }}
+            onClick={() => handleInputClick('phoneNumber')}
+          />
+        </div>
 
         <Group position="center" mt="md">
-          <button type="submit" className={styles.button}>
+          <button
+            type="submit"
+            className={styles.button}
+            style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+          >
             {language === 'English' ? 'Submit' : 'দাখিল কৰক'}
             <span style={{ paddingLeft: '10px' }}>
               <FaChevronRight />
@@ -328,7 +412,10 @@ const UserRegistrationForm = () => {
           </div>
         )}
         {keyboardVisibility && (
-          <div style={{ marginTop: '1rem' }} className={styles.keyboardContainer}>
+          <div
+            style={{ marginTop: '1rem', fontFamily: language !== 'English' ? 'Banikanta' : undefined }}
+            className={styles.keyboardContainer}
+          >
             <Keyboard
               onKeyPress={onKeyPress}
               display={customDisplay}

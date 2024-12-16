@@ -174,7 +174,11 @@ export default function Questionnaire() {
                 fontFamily: 'Montserrat',
               }}
             >
-              {language === 'English' ? 'Loading Questions ...' : 'প্ৰশ্নবোৰ লোড হৈ আছে ...'}
+              {language === 'English' ? (
+                'Loading Questions ...'
+              ) : (
+                <span style={{ fontFamily: 'Banikanta' }}>প্ৰশ্নবোৰ লোড হৈ আছে ...</span>
+              )}
             </p>
           </div>
         ) : (
@@ -264,7 +268,14 @@ export default function Questionnaire() {
                 <div style={{ display: 'flex', width: '30%' }} />
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '35%' }}>
                   {endIdx >= questionList.length && (
-                    <Button size="xl" uppercase type="submit" color="red" radius="md">
+                    <Button
+                      size="xl"
+                      uppercase
+                      type="submit"
+                      color="red"
+                      radius="md"
+                      style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+                    >
                       {language === 'English' ? 'Submit' : 'দাখিল কৰক'}
                     </Button>
                   )}
@@ -282,6 +293,7 @@ export default function Questionnaire() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '4px',
+                      fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined,
                     }}
                     disabled={currentPage <= 0}
                   >
@@ -297,6 +309,7 @@ export default function Questionnaire() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '4px',
+                      fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined,
                     }}
                     disabled={endIdx >= questionList.length}
                   >

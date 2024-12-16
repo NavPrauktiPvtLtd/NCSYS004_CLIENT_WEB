@@ -18,7 +18,13 @@ const Header = () => {
       >
         <HomeButton />
         <div style={{ display: 'flex', gap: 20, justifyContent: 'end', width: '85%' }}>
-          <label style={{ fontWeight: '500' }}>{language === 'English' ? 'Preferred Language' : 'পচন্দৰ ভাষা'}</label>
+          <label style={{ fontWeight: '500' }}>
+            {language === 'English' ? (
+              'Preferred Language'
+            ) : (
+              <span style={{ fontFamily: 'Banikanta' }}>পচন্দৰ ভাষা</span>
+            )}
+          </label>
           <div className={styles.genderOptions}>
             <input
               type="checkbox"
@@ -35,8 +41,11 @@ const Header = () => {
               value="Assamese"
               checked={language === 'Assamese'}
               onChange={() => setLanguage('Assamese')}
+              style={{ fontFamily: 'Banikanta' }}
             />
-            <label htmlFor="assamese">অসমীয়া</label>
+            <label htmlFor="assamese" style={{ fontFamily: 'Banikanta' }}>
+              অসমীয়া
+            </label>
           </div>
         </div>
       </div>

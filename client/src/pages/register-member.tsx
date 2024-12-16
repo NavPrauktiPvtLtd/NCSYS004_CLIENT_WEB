@@ -31,7 +31,10 @@ export default function UserDetails() {
           </>
         ) : (
           <>
-            <div className={styles.userdetailsheading}>
+            <div
+              className={styles.userdetailsheading}
+              style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+            >
               {language === 'English' ? 'Enter Your Details' : 'আপোনাৰ সবিশেষ লিখক'}
             </div>
             <UserRegistrationForm />
