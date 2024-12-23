@@ -26,9 +26,11 @@ const RegistrationComplete = () => {
         <TestCompletedSvg></TestCompletedSvg>
       </div>
       <h1 className={styles.registrationcompletetext}>
-        {language === 'English'
-          ? 'Thank you for providing your valuable feedback'
-          : 'আপোনাৰ বহুমূলীয়া মতামত দিয়াৰ বাবে ধন্যবাদ'}
+        {language === 'English' ? (
+          'Thank you for providing your valuable feedback'
+        ) : (
+          <span style={{ fontFamily: 'Banikanta' }}>আপোনাৰ বহুমূলীয়া মতামত দিয়াৰ বাবে ধন্যবাদ</span>
+        )}
       </h1>
     </div>
   );
