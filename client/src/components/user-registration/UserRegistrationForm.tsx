@@ -20,7 +20,7 @@ import { useTestSessionStore } from '@/store/store';
 import { toast, Toaster } from 'react-hot-toast';
 
 const UserRegistrationForm = () => {
-  const { language } = useAuthStore();
+  const { language, selectedArea } = useAuthStore();
 
   const departments = [
     {
@@ -81,8 +81,8 @@ const UserRegistrationForm = () => {
   const [department, setDepartment] = useState('');
   const [keyboardVisibility, setKeyboardVisibility] = useState(true);
   const [keyboardNumberVisibility, setKeyboardNumberVisibility] = useState(false);
-  const [inputField, setInputField] = useState<'name' | 'phoneNumber'>('name');
-  const [inputValue, setInputValue] = useState({ name: '', phoneNumber: '' });
+  const [inputField, setInputField] = useState<'name' | 'phoneNumber' | 'age' | 'address'>('name');
+  const [inputValue, setInputValue] = useState({ name: '', phoneNumber: '', age: '', address: '' });
   const [layoutName, setLayoutName] = useState('default');
   const { t } = useTranslation();
   const { kioskSerialID } = useKioskSerialNumberStore();
@@ -108,6 +108,12 @@ const UserRegistrationForm = () => {
     setGender(value as GENDER);
   };
 
+  useEffect(() => {
+    if (selectedArea) {
+      setValue('category', selectedArea);
+    }
+  }, [selectedArea, setValue]);
+
   const onSubmit = async (data: UserFormData) => {
     if (!gender) {
       toast.error('Please select your gender!');
@@ -119,16 +125,8 @@ const UserRegistrationForm = () => {
     }
     playClickSound();
 
-    const formattedData = {
-      ...data,
-      dob: new Date('2000-01-01'),
-      gender,
-    };
-
-    console.log(formattedData);
-
     try {
-      const result = await ServerAPI.createUser(formattedData);
+      const result = await ServerAPI.createUser(data);
       setGender(null);
       setMemberData(result.data.user);
       navigate(PageRoutes.AUTH_USER_QUESTIONNAIRE);
@@ -163,10 +161,10 @@ const UserRegistrationForm = () => {
     setLayoutName(newLayoutName);
   };
 
-  const handleInputClick = (fieldName: 'name' | 'phoneNumber') => {
+  const handleInputClick = (fieldName: 'name' | 'phoneNumber' | 'age' | 'address') => {
     setInputField(fieldName);
-    setKeyboardVisibility(fieldName === 'name');
-    setKeyboardNumberVisibility(fieldName === 'phoneNumber');
+    setKeyboardVisibility(fieldName === 'name' || fieldName === 'address');
+    setKeyboardNumberVisibility(fieldName === 'phoneNumber' || fieldName === 'age');
   };
 
   const customDisplay = {
@@ -181,9 +179,17 @@ const UserRegistrationForm = () => {
       const currentValue = inputValue[inputField];
       setValue('phoneNumber', currentValue);
     }
+    if (inputField === 'age') {
+      const currentValue = inputValue[inputField];
+      setValue('age', Number(currentValue));
+    }
     if (inputField === 'name') {
       const currentValue = inputValue[inputField];
       setValue('name', currentValue);
+    }
+    if (inputField === 'address') {
+      const currentValue = inputValue[inputField];
+      setValue('address', currentValue);
     }
   }, [inputField, inputValue, setValue]);
 
@@ -193,6 +199,13 @@ const UserRegistrationForm = () => {
       const currentValue = inputValue[inputField];
 
       if (currentValue.length >= 10) {
+        return;
+      }
+    }
+    if (inputField === 'age' && button !== '{bksp}') {
+      const currentValue = inputValue[inputField];
+
+      if (currentValue.length >= 2) {
         return;
       }
     }
@@ -307,6 +320,38 @@ const UserRegistrationForm = () => {
               className={styles.genderDateLabel}
               style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
             >
+              {language === 'English' ? 'Age' : 'বয়স'}
+              <span style={{ color: 'red', fontWeight: 'normal' }}>*</span>
+            </label>
+            <input
+              value={inputValue.age}
+              onChange={e => {
+                setInputValue({ ...inputValue, age: e.target.value });
+                setValue('age', Number(e.target.value));
+              }}
+              type="number"
+              style={{
+                width: '250px',
+                fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined,
+                height: 40,
+                borderColor: '#00000030',
+                paddingLeft: 7,
+                paddingRight: 7,
+                backgroundColor: 'white',
+                color: 'black',
+                borderRadius: 4,
+                MozAppearance: 'textfield',
+                appearance: 'none',
+              }}
+              onClick={() => handleInputClick('age')}
+            />
+          </div>
+
+          <div className={styles.parentContainer}>
+            <label
+              className={styles.genderDateLabel}
+              style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+            >
               {language === 'English' ? t('Admitted Department') : 'নামভৰ্তি বিভাগ'}
               <span style={{ color: 'red', fontWeight: 'normal' }}>*</span>
             </label>
@@ -319,7 +364,7 @@ const UserRegistrationForm = () => {
                 playClickSound();
               }}
               style={{
-                width: '500px',
+                width: '350px',
                 maxHeight: '450px',
                 overflowY: 'auto',
                 height: 40,
@@ -378,6 +423,39 @@ const UserRegistrationForm = () => {
               appearance: 'none',
             }}
             onClick={() => handleInputClick('phoneNumber')}
+          />
+        </div>
+
+        <div className={styles.parentContainer}>
+          <label
+            className={styles.genderDateLabel}
+            style={{ fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined }}
+          >
+            {language === 'English' ? t('Address') : 'ঠিকনা'}
+            <span style={{ color: 'red', fontWeight: 'normal' }}>*</span>
+          </label>
+          <input
+            value={inputValue.address}
+            onChange={e => {
+              setInputValue({ ...inputValue, address: e.target.value });
+              setValue('address', e.target.value);
+            }}
+            type="text"
+            style={{
+              marginBottom: '1rem',
+              width: '100%',
+              fontFamily: language !== 'English' ? 'Banikanta, sans-serif' : undefined,
+              height: 42,
+              borderColor: '#00000030',
+              paddingLeft: 7,
+              paddingRight: 7,
+              backgroundColor: 'white',
+              color: 'black',
+              borderRadius: 4,
+              MozAppearance: 'textfield',
+              appearance: 'none',
+            }}
+            onClick={() => handleInputClick('address')}
           />
         </div>
 

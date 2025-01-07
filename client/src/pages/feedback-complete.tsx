@@ -15,7 +15,7 @@ const RegistrationComplete = () => {
     const redirectTimer = setTimeout(() => {
       setSelectedArea(undefined);
       navigate(PageRoutes.HOME);
-    }, 8000);
+    }, 4000);
 
     return () => clearTimeout(redirectTimer);
   }, [navigate]);
